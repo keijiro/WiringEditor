@@ -20,14 +20,14 @@ public class WiringView : EditorWindow
     {
         _handlers = new List<NodeHandler>();
 
-        foreach (var n in Object.FindObjectsOfType<DelayNode>())
+        foreach (var n in Object.FindObjectsOfType<NodeBase>())
             _handlers.Add(new NodeHandler(n));
     }
 
     SerializedObject GetProperty(string nodeName)
     {
         var go = GameObject.Find(nodeName);
-        var comp = go.GetComponent<DelayNode>();
+        var comp = go.GetComponent<NodeBase>();
         return new UnityEditor.SerializedObject(comp);
     }
 

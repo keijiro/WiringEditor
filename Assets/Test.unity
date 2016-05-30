@@ -147,6 +147,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
+--- !u!1 &686900907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 686900909}
+  - 114: {fileID: 686900908}
+  m_Layer: 0
+  m_Name: Adder 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &686900908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 686900907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28aac7020cbd90646a4a4aa75779f47b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _editorRect:
+    serializedVersion: 2
+    x: 358
+    y: 232
+    width: 215
+    height: 77
+  _floatEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: AdderNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!4 &686900909
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 686900907}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
 --- !u!1 &1070664024
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,6 +237,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _editorRect:
+    serializedVersion: 2
+    x: 347
+    y: 75
+    width: 215
+    height: 77
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -197,12 +265,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  _editorRect:
-    serializedVersion: 2
-    x: 102
-    y: 228
-    width: 215
-    height: 77
 --- !u!4 &1070664026
 Transform:
   m_ObjectHideFlags: 0
@@ -227,6 +289,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _editorRect:
+    serializedVersion: 2
+    x: 89
+    y: 164
+    width: 215
+    height: 77
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -238,12 +306,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  _editorRect:
-    serializedVersion: 2
-    x: 247
-    y: 140
-    width: 215
-    height: 77
 --- !u!1 &1108870117
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,6 +420,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _editorRect:
+    serializedVersion: 2
+    x: 32
+    y: 34
+    width: 215
+    height: 77
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -380,12 +448,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  _editorRect:
-    serializedVersion: 2
-    x: 41
-    y: 65
-    width: 215
-    height: 77
 --- !u!4 &1150299425
 Transform:
   m_ObjectHideFlags: 0

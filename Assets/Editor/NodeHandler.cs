@@ -8,7 +8,7 @@ public class NodeHandler
     #region Public properties
 
     // Target node accessor.
-    public DelayNode node {
+    public NodeBase node {
         get { return _node; }
     }
 
@@ -33,7 +33,7 @@ public class NodeHandler
     #region Public methods
 
     // Constructor
-    public NodeHandler(DelayNode node)
+    public NodeHandler(NodeBase node)
     {
         _node = node;
         _title = node.GetType().Name + ":" + node.name;
@@ -67,7 +67,7 @@ public class NodeHandler
     #region Internal fields
 
     // Target node.
-    DelayNode _node;
+    NodeBase _node;
     string _title;
 
     // Members for handling the serialized properties.
@@ -97,7 +97,7 @@ public class NodeHandler
     #region Private methods
 
     // Enumerate all inlet/outlet members.
-    void EnumerateInletsAndOutlets(DelayNode node)
+    void EnumerateInletsAndOutlets(NodeBase node)
     {
         // Enumeration flags: all public and non-public members.
         const BindingFlags flags =
