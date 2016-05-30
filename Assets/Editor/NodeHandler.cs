@@ -17,6 +17,16 @@ public class NodeHandler
         get { return _activeWindowID == _windowID; }
     }
 
+    // Get the number of outlets.
+    public int outletCount {
+        get { return _outlets.Count; }
+    }
+
+    // Window rect.
+    public Rect windowRect {
+        get { return _rect.rectValue; }
+    }
+
     // Provides property editor object.
     // FIXME: might be memory intensive.
     // Should be cached in the parent editor side.
@@ -39,7 +49,7 @@ public class NodeHandler
         _title = node.GetType().Name + ":" + node.name;
 
         _inlets = new List<MemberInfo>();
-        _outlets = new List<MemberInfo>();
+        _outlets = new List<FieldInfo>();
 
         EnumerateInletsAndOutlets(node);
 
@@ -62,6 +72,17 @@ public class NodeHandler
         }
     }
 
+    // Enumerate target objects connected from a given outlet.
+    public Object[] EnumerateTargetsOfOutlet(int outletIndex)
+    {
+        var field = _outlets[outletIndex];
+        var ev = (UnityEngine.Events.UnityEventBase)field.GetValue(node);
+        var result = new Object[ev.GetPersistentEventCount()];
+        for (var i = 0; i < result.Length; i++)
+            result[i] = ev.GetPersistentTarget(i);
+        return result;
+    }
+
     #endregion
 
     #region Internal fields
@@ -76,7 +97,7 @@ public class NodeHandler
 
     // Inlet/outlet list.
     List<MemberInfo> _inlets;
-    List<MemberInfo> _outlets;
+    List<FieldInfo> _outlets;
 
     // Members for handling UI.
     int _windowID;
@@ -105,12 +126,16 @@ public class NodeHandler
             System.Reflection.BindingFlags.NonPublic |
             System.Reflection.BindingFlags.Instance;
 
-        foreach (var m in node.GetType().GetMembers(flags))
+        foreach (var member in node.GetType().GetMembers(flags))
         {
-            var ia = m.GetCustomAttributes(typeof(InletAttribute), true);
-            var oa = m.GetCustomAttributes(typeof(OutletAttribute), true);
-            if (ia.Length > 0) _inlets.Add(m);
-            if (oa.Length > 0) _outlets.Add(m);
+            var attrs = member.GetCustomAttributes(typeof(InletAttribute), true);
+            if (attrs.Length > 0) _inlets.Add(member);
+        }
+
+        foreach (var field in node.GetType().GetFields(flags))
+        {
+            var attrs = field.GetCustomAttributes(typeof(OutletAttribute), true);
+            if (attrs.Length > 0) _outlets.Add(field);
         }
     }
 
@@ -129,11 +154,21 @@ public class NodeHandler
 
     void OnWindow(int id)
     {
-        foreach (var m in _inlets)
-            EditorGUILayout.LabelField("in: " + m.Name);
+        foreach (var member in _inlets)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Button("*");
+            EditorGUILayout.LabelField("in: " + member.Name);
+            EditorGUILayout.EndHorizontal();
+        }
 
-        foreach (var m in _outlets)
-            EditorGUILayout.LabelField("out: " + m.Name);
+        foreach (var field in _outlets)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("out: " + field.Name);
+            GUILayout.Button("*");
+            EditorGUILayout.EndHorizontal();
+        }
 
         GUI.DragWindow();
 

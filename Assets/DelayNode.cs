@@ -4,23 +4,13 @@ using System.Collections;
 
 public class DelayNode : NodeBase
 {
-    [System.Serializable]
-    public class FloatEvent : UnityEvent<float> {}
-
     [SerializeField]
     float _delay = 1;
-
-    [Inlet]
-    public float inputValue {
-        get; set;
-    }
 
     [SerializeField, Outlet]
     UnityEvent _event;
 
-    [SerializeField, Outlet]
-    public FloatEvent _floatEvent;
-
+    [Inlet]
     public void Bang()
     {
         StartCoroutine(StartDelay());
@@ -30,6 +20,5 @@ public class DelayNode : NodeBase
     {
         yield return new WaitForSeconds(_delay);
         _event.Invoke();
-        _floatEvent.Invoke(1);
     }
 }
