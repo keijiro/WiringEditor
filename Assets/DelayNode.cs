@@ -1,14 +1,38 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
+using System;
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
+public class InletAttribute : Attribute
+{
+    public InletAttribute() {}
+}
+
+[AttributeUsage(AttributeTargets.Field)]
+public class OutletAttribute : Attribute
+{
+    public OutletAttribute() {}
+}
 
 public class DelayNode : MonoBehaviour
 {
+    [System.Serializable]
+    public class FloatEvent : UnityEvent<float> {}
+
     [SerializeField]
     float _delay = 1;
 
-    [SerializeField]
+    [SerializeField, Outlet]
     UnityEvent _event;
+
+    [SerializeField, Outlet]
+    public FloatEvent _floatEvent;
+
+    [Inlet]
+    public float inputValue {
+        get; set;
+    }
 
     [SerializeField, HideInInspector]
     Rect _editorRect;

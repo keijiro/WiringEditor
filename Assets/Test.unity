@@ -156,6 +156,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1070664026}
   - 114: {fileID: 1070664025}
+  - 114: {fileID: 1070664027}
   m_Layer: 0
   m_Name: Node 2
   m_TagString: Untagged
@@ -191,12 +192,17 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  _floatEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   _editorRect:
     serializedVersion: 2
-    x: 288
-    y: 107
-    width: 100
-    height: 50
+    x: 102
+    y: 228
+    width: 215
+    height: 77
 --- !u!4 &1070664026
 Transform:
   m_ObjectHideFlags: 0
@@ -210,6 +216,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+--- !u!114 &1070664027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1070664024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _delay: 1
+  _event:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  _floatEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  _editorRect:
+    serializedVersion: 2
+    x: 247
+    y: 140
+    width: 215
+    height: 77
 --- !u!1 &1108870117
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,12 +375,17 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  _floatEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: DelayNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   _editorRect:
     serializedVersion: 2
-    x: 58
-    y: 47
-    width: 100
-    height: 50
+    x: 41
+    y: 65
+    width: 215
+    height: 77
 --- !u!4 &1150299425
 Transform:
   m_ObjectHideFlags: 0
