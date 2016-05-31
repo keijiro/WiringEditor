@@ -176,8 +176,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _editorRect:
     serializedVersion: 2
-    x: 341
-    y: 204
+    x: 320
+    y: 181
     width: 238
     height: 63
   _delay: 1
@@ -485,8 +485,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _editorRect:
     serializedVersion: 2
-    x: 93
-    y: 59
+    x: 81
+    y: 48
     width: 238
     height: 63
   _delay: 1

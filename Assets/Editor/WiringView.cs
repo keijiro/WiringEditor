@@ -3,12 +3,20 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 
+// View controller class
 public class WiringView : EditorWindow
 {
+    #region Private fields
+
     List<NodeHandler> _handlers;
-    Vector2 _scroll;
-    Vector2 _scroll2;
     int _chosenNode;
+
+    Vector2 _scrollMain;
+    Vector2 _scrollSide;
+
+    #endregion
+
+    #region Window functions
 
     [MenuItem("Window/Wiring")]
     static void Init()
@@ -20,24 +28,46 @@ public class WiringView : EditorWindow
     {
         _handlers = new List<NodeHandler>();
 
+        // Enumerate all the nodes.
         foreach (var n in Object.FindObjectsOfType<NodeBase>())
             _handlers.Add(new NodeHandler(n));
     }
 
-    SerializedObject GetProperty(string nodeName)
+    void OnDisable()
     {
-        var go = GameObject.Find(nodeName);
-        var comp = go.GetComponent<NodeBase>();
-        return new UnityEditor.SerializedObject(comp);
+        _handlers = null;
     }
 
-    NodeHandler FindHandlerOfNode(Object o)
+    void OnGUI()
+    {
+        EditorGUILayout.BeginHorizontal();
+        DrawMainView();
+        DrawSideBar();
+        EditorGUILayout.EndHorizontal();
+    }
+
+    #endregion
+
+    #region Private methods
+
+    // Returns the handler of the active node.
+    NodeHandler activeNodeHandler {
+        get {
+            foreach (var h in _handlers)
+                if (h.isActive) return h;
+            return null;
+        }
+    }
+
+    // Returns the handler that holds the given node.
+    NodeHandler FindHandlerOfNode(NodeBase node)
     {
         foreach (var h in _handlers)
-            if (h.node == o) return h;
+            if (h.node == node) return h;
         return null;
     }
 
+    // Draw a connection line between a pair of node.
     void DrawConnection(NodeHandler from, NodeHandler to)
     {
         var p1 = (Vector3)from.windowRect.center;
@@ -47,48 +77,49 @@ public class WiringView : EditorWindow
         Handles.DrawBezier(p1, p2, t1, t2, Color.black, null, 2);
     }
 
-    void OnGUI()
-    {
-        EditorGUILayout.BeginHorizontal();
-
-        _scroll = EditorGUILayout.BeginScrollView(_scroll, true, true);
-
-        GUILayout.Box("", GUILayout.Width(1000), GUILayout.Height(1000));
-
-        foreach (var h in _handlers) DrawConnection(h);
-
-        BeginWindows();
-        foreach (var h in _handlers) h.MakeWindow();
-        EndWindows();
-
-        EditorGUILayout.EndScrollView();
-
-        EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
-        _scroll2 = EditorGUILayout.BeginScrollView(_scroll2);
-
-        foreach (var h in _handlers) {
-            if (h.isActive) {
-                h.propertyEditor.OnInspectorGUI();
-                break;
-            }
-        }
-        EditorGUILayout.EndScrollView();
-        EditorGUILayout.EndVertical();
-
-        EditorGUILayout.EndHorizontal();
-    }
-
-    void DrawConnection(NodeHandler handler)
+    // Draw all connection lines from a given node.
+    void DrawAllConnectionsFrom(NodeHandler handler)
     {
         for (var i = 0; i < handler.outletCount; i++)
         {
             foreach (var target in handler.EnumerateTargetsOfOutlet(i))
             {
-                if (target == null) continue;
-                var targetNode = FindHandlerOfNode(target);
-                if (targetNode != null)
-                    DrawConnection(handler, targetNode);
+                if (target == null || !(target is NodeBase)) continue;
+                DrawConnection(handler, FindHandlerOfNode((NodeBase)target));
             }
         }
     }
+
+    // GUI function for the main view
+    void DrawMainView()
+    {
+        _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain, true, true);
+
+        // Dummy box for expanding the scroll view
+        // FIXME: this is not acommon approach.
+        GUILayout.Box("", GUILayout.Width(1000), GUILayout.Height(1000));
+
+        // Draw connection lines.
+        foreach (var h in _handlers) DrawAllConnectionsFrom(h);
+
+        // Draw all the nodes.
+        BeginWindows();
+        foreach (var h in _handlers) h.MakeWindow();
+        EndWindows();
+
+        EditorGUILayout.EndScrollView();
+    }
+
+    // GUI function for the side bar
+    void DrawSideBar()
+    {
+        EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
+        _scrollSide = EditorGUILayout.BeginScrollView(_scrollSide);
+        var active = activeNodeHandler;
+        if (active != null) active.propertyEditor.OnInspectorGUI();
+        EditorGUILayout.EndScrollView();
+        EditorGUILayout.EndVertical();
+    }
+
+    #endregion
 }

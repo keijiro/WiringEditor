@@ -3,6 +3,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 
+// Class for handling data of each node
 public class NodeHandler
 {
     #region Public properties
@@ -15,6 +16,11 @@ public class NodeHandler
     // Is this window selected on the editor?
     public bool isActive {
         get { return _activeWindowID == _windowID; }
+    }
+
+    // Get the number of inlets.
+    public int inletCount {
+        get { return _inlets.Count; }
     }
 
     // Get the number of outlets.
