@@ -9,8 +9,12 @@ namespace Wiring.Editor
     {
         #region Public members
 
-        public string name {
-            get { return _name; }
+        public string memberName {
+            get { return _memberName; }
+        }
+
+        public string displayname {
+            get { return _displayName; }
         }
 
         public Rect buttonRect {
@@ -21,9 +25,10 @@ namespace Wiring.Editor
             get { return _event; }
         }
 
-        public Outlet(string name, UnityEventBase boundEvent)
+        public Outlet(string memberName, UnityEventBase boundEvent)
         {
-            _name = name;
+            _memberName = memberName;
+            _displayName = ObjectNames.NicifyVariableName(memberName);
             _event = boundEvent;
         }
 
@@ -31,7 +36,7 @@ namespace Wiring.Editor
         {
             EditorGUILayout.BeginHorizontal();
 
-            EditorGUILayout.LabelField("out: " + _name);
+            EditorGUILayout.LabelField("out: " + _displayName);
 
             GUILayout.Button("*");
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
@@ -43,7 +48,8 @@ namespace Wiring.Editor
 
         #region Private fields
 
-        string _name;
+        string _memberName;
+        string _displayName;
         UnityEventBase _event;
         Rect _buttonRect;
 

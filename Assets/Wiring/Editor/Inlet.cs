@@ -8,17 +8,22 @@ namespace Wiring.Editor
     {
         #region Public members
 
-        public string name {
-            get { return _name; }
+        public string methodName {
+            get { return _methodName; }
+        }
+
+        public string displayName {
+            get { return _displayName; }
         }
 
         public Rect buttonRect {
             get { return _buttonRect; }
         }
 
-        public Inlet(string name)
+        public Inlet(string methodName, string displayName)
         {
-            _name = name;
+            _methodName = methodName;
+            _displayName = ObjectNames.NicifyVariableName(displayName);
         }
 
         public void DrawGUI(bool updateRect)
@@ -28,7 +33,7 @@ namespace Wiring.Editor
             GUILayout.Button("*");
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
 
-            EditorGUILayout.LabelField("in: " + _name);
+            EditorGUILayout.LabelField("in: " + _displayName);
 
             EditorGUILayout.EndHorizontal();
         }
@@ -37,7 +42,8 @@ namespace Wiring.Editor
 
         #region Private fields
 
-        string _name;
+        string _methodName;
+        string _displayName;
         Rect _buttonRect;
 
         #endregion

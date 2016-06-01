@@ -148,11 +148,22 @@ namespace Wiring.Editor
                 System.Reflection.BindingFlags.Instance;
 
             // Inlets
-            foreach (var member in _instance.GetType().GetMembers(flags))
+            foreach (var method in _instance.GetType().GetMethods(flags))
             {
-                var attrs = member.GetCustomAttributes(typeof(InletAttribute), true);
-                if (attrs.Length > 0) _inlets.Add(new Inlet(member.Name));
+                var attrs = method.GetCustomAttributes(typeof(InletAttribute), true);
+                if (attrs.Length == 0) continue;
+                
+                _inlets.Add(new Inlet(method.Name, method.Name));
             }
+
+            foreach (var prop in _instance.GetType().GetProperties(flags))
+            {
+                var attrs = prop.GetCustomAttributes(typeof(InletAttribute), true);
+                if (attrs.Length == 0) continue;
+
+                _inlets.Add(new Inlet(prop.GetSetMethod().Name, prop.Name));
+            }
+
 
             // Outlets
             foreach (var field in _instance.GetType().GetFields(flags))
@@ -169,7 +180,7 @@ namespace Wiring.Editor
         Inlet GetInletWithName(string name)
         {
             foreach (var inlet in _inlets)
-                if (inlet.name == name) return inlet;
+                if (inlet.methodName == name) return inlet;
             return null;
         }
 
