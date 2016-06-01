@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,40 +9,19 @@ public class NodeHandler
 {
     #region Public properties
 
-    // Target node accessor.
+    // Target node
     public NodeBase node {
         get { return _node; }
     }
 
-    // Is this window selected on the editor?
+    // Is this window selected in the editor?
     public bool isActive {
         get { return _activeWindowID == _windowID; }
     }
 
-    // Get the number of inlets.
-    public int inletCount {
-        get { return _inlets.Count; }
-    }
-
-    // Get the number of outlets.
-    public int outletCount {
-        get { return _outlets.Count; }
-    }
-
-    // Window rect.
+    // Window rect
     public Rect windowRect {
-        get { return _rect.rectValue; }
-    }
-
-    // Provides property editor object.
-    // FIXME: might be memory intensive.
-    // Should be cached in the parent editor side.
-    public Editor propertyEditor {
-        get {
-            if (_editor == null)
-                _editor = Editor.CreateEditor(_node);
-            return _editor;
-        }
+        get { return _serializedRect.rectValue; }
     }
 
     #endregion
@@ -52,134 +32,145 @@ public class NodeHandler
     public NodeHandler(NodeBase node)
     {
         _node = node;
-        _title = node.GetType().Name + ":" + node.name;
-
-        _inlets = new List<MemberInfo>();
-        _outlets = new List<FieldInfo>();
-
-        EnumerateInletsAndOutlets(node);
-
-        _serialized = new UnityEditor.SerializedObject(node); 
-        _rect = _serialized.FindProperty("_editorRect");
-
-        FixRect();
-
         _windowID = _windowCounter++;
+
+        // Inlets and outlets
+        _inlets = new List<NodeInlet>();
+        _outlets = new List<NodeOutlet>();
+        ScanAllInletsAndOutlets();
+
+        // Window rect (position and size)
+        _serializedObject = new UnityEditor.SerializedObject(node); 
+        _serializedRect = _serializedObject.FindProperty("_editorRect");
+        ValidateRect();
     }
 
-    // Make a subwindow of the node.
-    public void MakeWindow()
+    // Draw the (sub)window GUI.
+    public void DrawWindowGUI()
     {
-        var rect0 = _rect.rectValue;
-        var rect1 = GUILayout.Window(_windowID, rect0, OnWindow, _title);
-        if (rect0 != rect1) {
-            _rect.rectValue = rect1;
-            _serialized.ApplyModifiedProperties();
+        var rect = _serializedRect.rectValue;
+        var newRect = GUILayout.Window(_windowID, rect, OnWindowGUI, windowTitle);
+        if (newRect != rect) {
+            _serializedRect.rectValue = newRect;
+            _serializedObject.ApplyModifiedProperties();
         }
     }
 
-    // Enumerate target objects connected from a given outlet.
-    public Object[] EnumerateTargetsOfOutlet(int outletIndex)
+    // Draw the property inspector GUI.
+    public void DrawInspectorGUI()
     {
-        var field = _outlets[outletIndex];
-        var ev = (UnityEngine.Events.UnityEventBase)field.GetValue(node);
-        var result = new Object[ev.GetPersistentEventCount()];
-        for (var i = 0; i < result.Length; i++)
-            result[i] = ev.GetPersistentTarget(i);
-        return result;
+        if (_editor == null) _editor = Editor.CreateEditor(_node);
+        _editor.OnInspectorGUI();
+    }
+
+    // Enumerate all outgoing connections.
+    public void EnumerateConnections(ConnectionDrawer drawer)
+    {
+        foreach (var outlet in _outlets)
+        {
+            var boundEvent = outlet.boundEvent;
+            var targetCount = boundEvent.GetPersistentEventCount();
+            for (var i = 0; i < targetCount; i++)
+            {
+                var target = boundEvent.GetPersistentTarget(i);
+                if (target == null || !(target is NodeBase)) continue;
+                var methodName = boundEvent.GetPersistentMethodName(i);
+                drawer.AddConnection(this, outlet, (NodeBase)target, methodName);
+            }
+        }
+    }
+
+    // Get an inlet with a given name.
+    public NodeInlet GetInletWithName(string name)
+    {
+        foreach (var inlet in _inlets)
+            if (inlet.name == name) return inlet;
+        return null;
     }
 
     #endregion
 
-    #region Internal fields
+    #region Private fields
 
-    // Target node.
+    // Target node
     NodeBase _node;
-    string _title;
 
-    // Members for handling the serialized properties.
-    SerializedObject _serialized;
-    SerializedProperty _rect;
+    // Serialized property accessor
+    SerializedObject _serializedObject;
+    SerializedProperty _serializedRect;
 
-    // Inlet/outlet list.
-    List<MemberInfo> _inlets;
-    List<FieldInfo> _outlets;
+    // Inlet/outlet list
+    List<NodeInlet> _inlets;
+    List<NodeOutlet> _outlets;
 
-    // Members for handling UI.
+    // GUI
     int _windowID;
-    Editor _editor;
+    Editor _editor; // FIXME: might be memory intensive.
+                    // Should be cached in the parent editor side.
 
-    #endregion
-
-    #region Static class members
-
-    // ID of currently selected window.
+    // Window ID of currently selected window
     static int _activeWindowID;
 
-    // The total count of windows; used for giving each window ID.
+    // The total count of windows (used to generate window IDs)
     static int _windowCounter;
 
     #endregion
 
-    #region Private methods
+    #region Private properties and methods
 
-    // Enumerate all inlet/outlet members.
-    void EnumerateInletsAndOutlets(NodeBase node)
-    {
-        // Enumeration flags: all public and non-public members.
-        const BindingFlags flags =
-            System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.NonPublic |
-            System.Reflection.BindingFlags.Instance;
-
-        foreach (var member in node.GetType().GetMembers(flags))
-        {
-            var attrs = member.GetCustomAttributes(typeof(InletAttribute), true);
-            if (attrs.Length > 0) _inlets.Add(member);
-        }
-
-        foreach (var field in node.GetType().GetFields(flags))
-        {
-            var attrs = field.GetCustomAttributes(typeof(OutletAttribute), true);
-            if (attrs.Length > 0) _outlets.Add(field);
-        }
+    // Window title
+    string windowTitle {
+        get { return _node.name + " (" + _node.GetType().Name + ")"; }
     }
 
-    // Fix the window rect if there is something wrong.
-    void FixRect()
+    // Window GUI function
+    void OnWindowGUI(int id)
     {
-        var rect = _rect.rectValue;
-        rect.width = Mathf.Max(100, rect.width);
-        rect.height = 50;
-        _rect.rectValue = rect;
-    }
+        var updateRect = (Event.current.type == EventType.Repaint);
 
-    #endregion
-
-    #region Editor UI functions
-
-    void OnWindow(int id)
-    {
-        foreach (var member in _inlets)
-        {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Button("*");
-            EditorGUILayout.LabelField("in: " + member.Name);
-            EditorGUILayout.EndHorizontal();
-        }
-
-        foreach (var field in _outlets)
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("out: " + field.Name);
-            GUILayout.Button("*");
-            EditorGUILayout.EndHorizontal();
-        }
+        foreach (var i in _inlets) i.DrawGUI(updateRect);
+        foreach (var o in _outlets) o.DrawGUI(updateRect);
 
         GUI.DragWindow();
 
         if (Event.current.type == EventType.Used)
             _activeWindowID = id;
+    }
+
+    // Retrieve all the inlet/outlet mebers.
+    void ScanAllInletsAndOutlets()
+    {
+        // Enumeration flags: all public and non-public members
+        const BindingFlags flags =
+            System.Reflection.BindingFlags.Public |
+            System.Reflection.BindingFlags.NonPublic |
+            System.Reflection.BindingFlags.Instance;
+
+        // Inlets
+        foreach (var member in _node.GetType().GetMembers(flags))
+        {
+            var attrs = member.GetCustomAttributes(typeof(InletAttribute), true);
+            if (attrs.Length > 0) _inlets.Add(new NodeInlet(member));
+        }
+
+        // Outlets
+        foreach (var field in _node.GetType().GetFields(flags))
+        {
+            var attrs = field.GetCustomAttributes(typeof(OutletAttribute), true);
+            if (attrs.Length == 0) continue;
+
+            var evt = (UnityEventBase)field.GetValue(_node);
+            _outlets.Add(new NodeOutlet(field.Name, evt));
+        }
+    }
+
+    // Validate the window rect.
+    void ValidateRect()
+    {
+        var rect = _serializedRect.rectValue;
+        rect.width = Mathf.Max(100, rect.width); // FIXME: no magic number
+        rect.height = 1;
+        _serializedRect.rectValue = rect;
     }
 
     #endregion
