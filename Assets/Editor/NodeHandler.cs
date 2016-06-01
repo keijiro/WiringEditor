@@ -19,9 +19,14 @@ public class NodeHandler
         get { return _activeWindowID == _windowID; }
     }
 
+    // Window position
+    public Vector2 windowPosition {
+        get { return _serializedPosition.vector2Value; }
+    }
+
     // Window rect
     public Rect windowRect {
-        get { return _serializedRect.rectValue; }
+        get { return new Rect(windowPosition, new Vector2(100, 1)); }
     }
 
     #endregion
@@ -39,19 +44,19 @@ public class NodeHandler
         _outlets = new List<NodeOutlet>();
         ScanAllInletsAndOutlets();
 
-        // Window rect (position and size)
+        // Window position
         _serializedObject = new UnityEditor.SerializedObject(node); 
-        _serializedRect = _serializedObject.FindProperty("_editorRect");
-        ValidateRect();
+        _serializedPosition = _serializedObject.FindProperty("_wiringNodePosition");
+        ValidatePosition();
     }
 
     // Draw the (sub)window GUI.
     public void DrawWindowGUI()
     {
-        var rect = _serializedRect.rectValue;
+        var rect = windowRect;
         var newRect = GUILayout.Window(_windowID, rect, OnWindowGUI, windowTitle);
         if (newRect != rect) {
-            _serializedRect.rectValue = newRect;
+            _serializedPosition.vector2Value = newRect.position;
             _serializedObject.ApplyModifiedProperties();
         }
     }
@@ -97,7 +102,7 @@ public class NodeHandler
 
     // Serialized property accessor
     SerializedObject _serializedObject;
-    SerializedProperty _serializedRect;
+    SerializedProperty _serializedPosition;
 
     // Inlet/outlet list
     List<NodeInlet> _inlets;
@@ -164,13 +169,16 @@ public class NodeHandler
         }
     }
 
-    // Validate the window rect.
-    void ValidateRect()
+    // Validate the window position.
+    void ValidatePosition()
     {
-        var rect = _serializedRect.rectValue;
-        rect.width = Mathf.Max(100, rect.width); // FIXME: no magic number
-        rect.height = 1;
-        _serializedRect.rectValue = rect;
+        // Initialize the node position if not yet.
+        var position = _serializedPosition.vector2Value;
+        if (position == NodeBase.uninitializedNodePosition)
+        {
+            position = new Vector2((_windowID % 8) * 50, _windowID * 10);
+            _serializedPosition.vector2Value = position;
+        }
     }
 
     #endregion

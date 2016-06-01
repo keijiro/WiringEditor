@@ -74,8 +74,8 @@ public class ConnectionDrawer
     // Draw a connection line between a pair of node.
     void DrawConnection(Connection c)
     {
-        var p1 = (Vector3)c.fromNode.windowRect.position;
-        var p2 = (Vector3)c.toNode.windowRect.position;
+        var p1 = (Vector3)c.fromNode.windowPosition;
+        var p2 = (Vector3)c.toNode.windowPosition;
 
         p1 += (Vector3)c.fromOutlet.buttonRect.center;
         p2 += (Vector3)c.toInlet.buttonRect.center;
