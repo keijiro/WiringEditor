@@ -3,35 +3,38 @@ using UnityEngine.Events;
 using UnityEditor;
 using System.Reflection;
 
-public class NodeOutlet
+namespace Wiring
 {
-    string _name;
-    UnityEventBase _event;
-    Rect _buttonRect;
-
-    public Rect buttonRect {
-        get { return _buttonRect; }
-    }
-
-    public UnityEventBase boundEvent {
-        get { return _event; }
-    }
-
-    public NodeOutlet(string name, UnityEventBase evt)
+    public class NodeOutlet
     {
-        _name = name;
-        _event = evt;
-    }
+        string _name;
+        UnityEventBase _event;
+        Rect _buttonRect;
 
-    public void DrawGUI(bool updateRect)
-    {
-        EditorGUILayout.BeginHorizontal();
+        public Rect buttonRect {
+            get { return _buttonRect; }
+        }
 
-        EditorGUILayout.LabelField("out: " + _name);
+        public UnityEventBase boundEvent {
+            get { return _event; }
+        }
 
-        GUILayout.Button("*");
-        if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
+        public NodeOutlet(string name, UnityEventBase evt)
+        {
+            _name = name;
+            _event = evt;
+        }
 
-        EditorGUILayout.EndHorizontal();
+        public void DrawGUI(bool updateRect)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.LabelField("out: " + _name);
+
+            GUILayout.Button("*");
+            if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
+
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }

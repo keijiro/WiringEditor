@@ -2,23 +2,26 @@
 using UnityEngine.Events;
 using System.Collections;
 
-public class DelayNode : NodeBase
+namespace Wiring
 {
-    [SerializeField]
-    float _delay = 1;
-
-    [SerializeField, Outlet]
-    UnityEvent _event;
-
-    [Inlet]
-    public void Bang()
+    public class DelayNode : NodeBase
     {
-        StartCoroutine(StartDelay());
-    }
+        [SerializeField]
+        float _delay = 1;
 
-    IEnumerator StartDelay()
-    {
-        yield return new WaitForSeconds(_delay);
-        _event.Invoke();
+        [SerializeField, Outlet]
+        UnityEvent _event;
+
+        [Inlet]
+        public void Bang()
+        {
+            StartCoroutine(StartDelay());
+        }
+
+        IEnumerator StartDelay()
+        {
+            yield return new WaitForSeconds(_delay);
+            _event.Invoke();
+        }
     }
 }

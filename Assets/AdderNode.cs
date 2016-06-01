@@ -1,35 +1,38 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class AdderNode : NodeBase
+namespace Wiring
 {
-    [System.Serializable]
-    public class FloatEvent : UnityEvent<float> {}
-
-    [Inlet]
-    public float inputValue {
-        set {
-            _lastInputValue = value;
-            InvokeEvent();
-        }
-    }
-
-    [Inlet]
-    public float modulationValue {
-        set {
-            _lastModulationValue = value;
-            InvokeEvent();
-        }
-    }
-
-    [SerializeField, Outlet]
-    public FloatEvent _floatEvent;
-
-    float _lastInputValue;
-    float _lastModulationValue;
-
-    void InvokeEvent()
+    public class AdderNode : NodeBase
     {
-        _floatEvent.Invoke(_lastInputValue + _lastModulationValue);
+        [System.Serializable]
+        public class FloatEvent : UnityEvent<float> {}
+
+        [Inlet]
+        public float inputValue {
+            set {
+                _lastInputValue = value;
+                InvokeEvent();
+            }
+        }
+
+        [Inlet]
+        public float modulationValue {
+            set {
+                _lastModulationValue = value;
+                InvokeEvent();
+            }
+        }
+
+        [SerializeField, Outlet]
+        public FloatEvent _floatEvent;
+
+        float _lastInputValue;
+        float _lastModulationValue;
+
+        void InvokeEvent()
+        {
+            _floatEvent.Invoke(_lastInputValue + _lastModulationValue);
+        }
     }
 }

@@ -2,33 +2,36 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 
-public class NodeInlet
+namespace Wiring
 {
-    MemberInfo _memberInfo;
-    Rect _buttonRect;
-
-    public string name {
-        get { return _memberInfo.Name; }
-    }
-
-    public Rect buttonRect {
-        get { return _buttonRect; }
-    }
-
-    public NodeInlet(MemberInfo member)
+    public class NodeInlet
     {
-        _memberInfo = member;
-    }
+        MemberInfo _memberInfo;
+        Rect _buttonRect;
 
-    public void DrawGUI(bool updateRect)
-    {
-        EditorGUILayout.BeginHorizontal();
+        public string name {
+            get { return _memberInfo.Name; }
+        }
 
-        GUILayout.Button("*");
-        if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
+        public Rect buttonRect {
+            get { return _buttonRect; }
+        }
 
-        EditorGUILayout.LabelField("in: " + _memberInfo.Name);
+        public NodeInlet(MemberInfo member)
+        {
+            _memberInfo = member;
+        }
 
-        EditorGUILayout.EndHorizontal();
+        public void DrawGUI(bool updateRect)
+        {
+            EditorGUILayout.BeginHorizontal();
+
+            GUILayout.Button("*");
+            if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
+
+            EditorGUILayout.LabelField("in: " + _memberInfo.Name);
+
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }

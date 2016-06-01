@@ -1,8 +1,11 @@
+// Suppress "unused variable" warning messages.
+#pragma warning disable 0414
+
 using UnityEngine;
 using System;
 
-//namespace Wiring
-//{
+namespace Wiring
+{
     // Attribute for marking inlets
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
     public class InletAttribute : Attribute
@@ -27,4 +30,4 @@ using System;
             get { return new Vector2(-1000, -1000); }
         }
     }
-//}
+}
