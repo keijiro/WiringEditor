@@ -112,6 +112,11 @@ namespace Wiring.Editor
                 }
                 else
                 {
+                    if (_linkInlet != null)
+                        r.node.TryConnect(r.outlet, _linkNode, _linkInlet);
+                    else
+                        _linkNode.TryConnect(_linkOutlet, r.node, r.inlet);
+
                     _state = State.Ready;
                     _linkNode = null;
                     _linkInlet = null;

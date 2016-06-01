@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
+using UnityEditor.Events;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -45,6 +46,59 @@ namespace Wiring.Editor
             _serializedObject = new UnityEditor.SerializedObject(_instance);
             _serializedPosition = _serializedObject.FindProperty("_wiringNodePosition");
             ValidatePosition();
+        }
+
+        // Try to make connection to a given node/inlet.
+        public void TryConnect(Outlet outlet, Node targetNode, Inlet inlet)
+        {
+            var target = targetNode._instance;
+            var targetMethod = target.GetType().GetMethod(inlet.methodName);
+            var targetMethodArgs = targetMethod.GetParameters();
+            System.Delegate targetAction = null;
+
+            if (targetMethodArgs.Length == 0)
+                targetAction = System.Delegate.CreateDelegate(typeof(UnityAction), target, targetMethod);
+            else if (targetMethodArgs[0].ParameterType == typeof(bool))
+                targetAction = System.Delegate.CreateDelegate(typeof(UnityAction<bool>), target, targetMethod);
+            else if (targetMethodArgs[0].ParameterType == typeof(int))
+                targetAction = System.Delegate.CreateDelegate(typeof(UnityAction<int>), target, targetMethod);
+            else if (targetMethodArgs[0].ParameterType == typeof(float))
+                targetAction = System.Delegate.CreateDelegate(typeof(UnityAction<float>), target, targetMethod);
+
+            if (outlet.boundEvent is UnityEvent)
+            {
+                var outEvent = (UnityEvent)outlet.boundEvent;
+                if (targetMethodArgs.Length == 0)
+                    UnityEventTools.AddVoidPersistentListener(outEvent, (UnityAction)targetAction);
+                else if (targetMethodArgs[0].ParameterType == typeof(bool))
+                    UnityEventTools.AddBoolPersistentListener(outEvent, (UnityAction<bool>)targetAction, false);
+                else if (targetMethodArgs[0].ParameterType == typeof(int))
+                    UnityEventTools.AddIntPersistentListener(outEvent, (UnityAction<int>)targetAction, 0);
+                else if (targetMethodArgs[0].ParameterType == typeof(float))
+                    UnityEventTools.AddFloatPersistentListener(outEvent, (UnityAction<float>)targetAction, 0);
+            }
+            else if (outlet.boundEvent is UnityEvent<bool>)
+            {
+                var outEvent = (UnityEvent<bool>)outlet.boundEvent;
+                if (targetMethodArgs.Length > 0 && targetMethodArgs[0].ParameterType == typeof(bool))
+                    UnityEventTools.AddPersistentListener(outEvent, (UnityAction<bool>)targetAction);
+            }
+            else if (outlet.boundEvent is UnityEvent<int>)
+            {
+                var outEvent = (UnityEvent<int>)outlet.boundEvent;
+                if (targetMethodArgs.Length > 0 && targetMethodArgs[0].ParameterType == typeof(int))
+                    UnityEventTools.AddPersistentListener(outEvent, (UnityAction<int>)targetAction);
+            }
+            else if (outlet.boundEvent is UnityEvent<float>)
+            {
+                var outEvent = (UnityEvent<float>)outlet.boundEvent;
+                if (targetMethodArgs.Length > 0 && targetMethodArgs[0].ParameterType == typeof(float))
+                    UnityEventTools.AddPersistentListener(outEvent, (UnityAction<float>)targetAction);
+            }
+
+            _cachedLinks = null;
+
+            _serializedObject.ApplyModifiedProperties();
         }
 
         // Draw (sub)window GUI.
@@ -152,7 +206,7 @@ namespace Wiring.Editor
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance;
 
-            // Inlets
+            // Inlets (method)
             foreach (var method in _instance.GetType().GetMethods(flags))
             {
                 var attrs = method.GetCustomAttributes(typeof(InletAttribute), true);
@@ -161,6 +215,7 @@ namespace Wiring.Editor
                 _inlets.Add(new Inlet(method.Name, method.Name));
             }
 
+            // Inlets (property)
             foreach (var prop in _instance.GetType().GetProperties(flags))
             {
                 var attrs = prop.GetCustomAttributes(typeof(InletAttribute), true);
@@ -168,7 +223,6 @@ namespace Wiring.Editor
 
                 _inlets.Add(new Inlet(prop.GetSetMethod().Name, prop.Name));
             }
-
 
             // Outlets
             foreach (var field in _instance.GetType().GetFields(flags))
