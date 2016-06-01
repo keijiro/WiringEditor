@@ -3,15 +3,16 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Wiring
+namespace Wiring.Editor
 {
-    // View controller class
-    public class WiringView : EditorWindow
+    // Editor window class
+    public class WiringEditorWindow : EditorWindow
     {
         #region Private fields
 
-        List<NodeHandler> _nodeHandlers;
-        Circuit _circuit;
+        List<Node> _nodeList;
+        NodeMap _nodeMap;
+
         Vector2 _scrollMain;
         Vector2 _scrollSide;
 
@@ -22,27 +23,27 @@ namespace Wiring
         [MenuItem("Window/Wiring")]
         static void Init()
         {
-            EditorWindow.GetWindow<WiringView>("Wiring").Show();
+            EditorWindow.GetWindow<WiringEditorWindow>("Wiring").Show();
         }
 
         void OnEnable()
         {
             // Enumerate all the nodes in the scene hierarchy.
-            _nodeHandlers = new List<NodeHandler>();
-            foreach (var n in Object.FindObjectsOfType<NodeBase>())
-                _nodeHandlers.Add(new NodeHandler(n));
+            _nodeList = new List<Node>();
+            _nodeMap = new NodeMap();
 
-            // Enumerate all the connections between nodes.
-            _circuit = new Circuit();
-            _circuit.BeginScan(_nodeHandlers.AsReadOnly());
-            foreach (var h in _nodeHandlers)
-                h.EnumerateConnections(_circuit);
-            _circuit.EndScan();
+            foreach (var instance in Object.FindObjectsOfType<NodeBase>())
+            {
+                var node = new Node(instance);
+                _nodeList.Add(node);
+                _nodeMap.Add(instance, node);
+            }
         }
 
         void OnDisable()
         {
-            _nodeHandlers = null;
+            _nodeList = null;
+            _nodeMap = null;
         }
 
         void OnGUI()
@@ -57,11 +58,11 @@ namespace Wiring
 
         #region Private methods
 
-        // Returns the handler of the active node.
-        NodeHandler activeNodeHandler {
+        // Returns the node currently chosen in the window.
+        Node activeNode {
             get {
-                foreach (var h in _nodeHandlers)
-                    if (h.isActive) return h;
+                foreach (var node in _nodeList)
+                    if (node.isActive) return node;
                 return null;
             }
         }
@@ -77,11 +78,11 @@ namespace Wiring
 
             // Draw all the nodes.
             BeginWindows();
-            foreach (var h in _nodeHandlers) h.DrawWindowGUI();
+            foreach (var node in _nodeList) node.DrawWindowGUI();
             EndWindows();
 
             // Draw connection lines.
-            _circuit.DrawConnectionLines();
+            foreach (var node in _nodeList) node.DrawConnectionLines(_nodeMap);
 
             EditorGUILayout.EndScrollView();
         }
@@ -91,7 +92,7 @@ namespace Wiring
         {
             EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
             _scrollSide = EditorGUILayout.BeginScrollView(_scrollSide);
-            var active = activeNodeHandler;
+            var active = activeNode;
             if (active != null) active.DrawInspectorGUI();
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();

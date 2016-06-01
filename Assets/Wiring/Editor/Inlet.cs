@@ -1,25 +1,24 @@
 using UnityEngine;
 using UnityEditor;
-using System.Reflection;
 
-namespace Wiring
+namespace Wiring.Editor
 {
-    public class NodeInlet
+    // Editor representation of node inlet
+    public class Inlet
     {
-        MemberInfo _memberInfo;
-        Rect _buttonRect;
+        #region Public members
 
         public string name {
-            get { return _memberInfo.Name; }
+            get { return _name; }
         }
 
         public Rect buttonRect {
             get { return _buttonRect; }
         }
 
-        public NodeInlet(MemberInfo member)
+        public Inlet(string name)
         {
-            _memberInfo = member;
+            _name = name;
         }
 
         public void DrawGUI(bool updateRect)
@@ -29,9 +28,18 @@ namespace Wiring
             GUILayout.Button("*");
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
 
-            EditorGUILayout.LabelField("in: " + _memberInfo.Name);
+            EditorGUILayout.LabelField("in: " + _name);
 
             EditorGUILayout.EndHorizontal();
         }
+
+        #endregion
+
+        #region Private fields
+
+        string _name;
+        Rect _buttonRect;
+
+        #endregion
     }
 }

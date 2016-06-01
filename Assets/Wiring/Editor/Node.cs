@@ -4,17 +4,12 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Wiring
+namespace Wiring.Editor
 {
-    // Class for handling data of each node
-    public class NodeHandler
+    // Editor representation of node
+    public class Node
     {
         #region Public properties
-
-        // Target node
-        public NodeBase node {
-            get { return _node; }
-        }
 
         // Is this window selected in the editor?
         public bool isActive {
@@ -36,23 +31,23 @@ namespace Wiring
         #region Public methods
 
         // Constructor
-        public NodeHandler(NodeBase node)
+        public Node(NodeBase instance)
         {
-            _node = node;
+            _instance = instance;
             _windowID = _windowCounter++;
 
             // Inlets and outlets
-            _inlets = new List<NodeInlet>();
-            _outlets = new List<NodeOutlet>();
+            _inlets = new List<Inlet>();
+            _outlets = new List<Outlet>();
             ScanAllInletsAndOutlets();
 
             // Window position
-            _serializedObject = new UnityEditor.SerializedObject(node); 
+            _serializedObject = new UnityEditor.SerializedObject(_instance);
             _serializedPosition = _serializedObject.FindProperty("_wiringNodePosition");
             ValidatePosition();
         }
 
-        // Draw the (sub)window GUI.
+        // Draw (sub)window GUI.
         public void DrawWindowGUI()
         {
             var rect = windowRect;
@@ -63,57 +58,43 @@ namespace Wiring
             }
         }
 
-        // Draw the property inspector GUI.
+        // Draw property inspector GUI.
         public void DrawInspectorGUI()
         {
-            if (_editor == null) _editor = Editor.CreateEditor(_node);
+            if (_editor == null)
+                _editor = UnityEditor.Editor.CreateEditor(_instance);
+
             _editor.OnInspectorGUI();
         }
 
-        // Enumerate all outgoing connections.
-        public void EnumerateConnections(Circuit circuit)
+        // Draw connection lines.
+        public void DrawConnectionLines(NodeMap map)
         {
-            foreach (var outlet in _outlets)
-            {
-                var boundEvent = outlet.boundEvent;
-                var targetCount = boundEvent.GetPersistentEventCount();
-                for (var i = 0; i < targetCount; i++)
-                {
-                    var target = boundEvent.GetPersistentTarget(i);
-                    if (target == null || !(target is NodeBase)) continue;
-                    var methodName = boundEvent.GetPersistentMethodName(i);
-                    circuit.RegisterConnection(this, outlet, (NodeBase)target, methodName);
-                }
-            }
-        }
-
-        // Get an inlet with a given name.
-        public NodeInlet GetInletWithName(string name)
-        {
-            foreach (var inlet in _inlets)
-                if (inlet.name == name) return inlet;
-            return null;
+            if (_cachedLinks == null) EnumerateAndCacheLinks(map);
+            foreach (var l in _cachedLinks) l.DrawLine();
         }
 
         #endregion
 
         #region Private fields
 
-        // Target node
-        NodeBase _node;
+        // Runtime instance
+        Wiring.NodeBase _instance;
 
         // Serialized property accessor
         SerializedObject _serializedObject;
         SerializedProperty _serializedPosition;
 
         // Inlet/outlet list
-        List<NodeInlet> _inlets;
-        List<NodeOutlet> _outlets;
+        List<Inlet> _inlets;
+        List<Outlet> _outlets;
+
+        // Cached connection info
+        List<NodeLink> _cachedLinks;
 
         // GUI
         int _windowID;
-        Editor _editor; // FIXME: might be memory intensive.
-                        // Should be cached in the parent editor side.
+        UnityEditor.Editor _editor; // FIXME: might be memory intensive.
 
         // Window ID of currently selected window
         static int _activeWindowID;
@@ -127,7 +108,7 @@ namespace Wiring
 
         // Window title
         string windowTitle {
-            get { return _node.name + " (" + _node.GetType().Name + ")"; }
+            get { return _instance.name + " (" + _instance.GetType().Name + ")"; }
         }
 
         // Window GUI function
@@ -144,6 +125,19 @@ namespace Wiring
                 _activeWindowID = id;
         }
 
+        // Validate the window position.
+        void ValidatePosition()
+        {
+            // Initialize the node position if not yet.
+            var position = _serializedPosition.vector2Value;
+            if (position == Wiring.NodeBase.uninitializedNodePosition)
+            {
+                var x = (_windowID % 8 + 1) * 50;
+                var y = (_windowID + 1) * 40;
+                _serializedPosition.vector2Value = new Vector2(x, y);
+            }
+        }
+
         // Retrieve all the inlet/outlet mebers.
         void ScanAllInletsAndOutlets()
         {
@@ -154,33 +148,53 @@ namespace Wiring
                 System.Reflection.BindingFlags.Instance;
 
             // Inlets
-            foreach (var member in _node.GetType().GetMembers(flags))
+            foreach (var member in _instance.GetType().GetMembers(flags))
             {
                 var attrs = member.GetCustomAttributes(typeof(InletAttribute), true);
-                if (attrs.Length > 0) _inlets.Add(new NodeInlet(member));
+                if (attrs.Length > 0) _inlets.Add(new Inlet(member.Name));
             }
 
             // Outlets
-            foreach (var field in _node.GetType().GetFields(flags))
+            foreach (var field in _instance.GetType().GetFields(flags))
             {
                 var attrs = field.GetCustomAttributes(typeof(OutletAttribute), true);
                 if (attrs.Length == 0) continue;
 
-                var evt = (UnityEventBase)field.GetValue(_node);
-                _outlets.Add(new NodeOutlet(field.Name, evt));
+                var evt = (UnityEventBase)field.GetValue(_instance);
+                _outlets.Add(new Outlet(field.Name, evt));
             }
         }
 
-        // Validate the window position.
-        void ValidatePosition()
+        // Get an inlet with a given name.
+        Inlet GetInletWithName(string name)
         {
-            // Initialize the node position if not yet.
-            var position = _serializedPosition.vector2Value;
-            if (position == NodeBase.uninitializedNodePosition)
+            foreach (var inlet in _inlets)
+                if (inlet.name == name) return inlet;
+            return null;
+        }
+
+        // Enumerate all outgoing connections and cache them.
+        void EnumerateAndCacheLinks(NodeMap map)
+        {
+            _cachedLinks = new List<NodeLink>();
+
+            foreach (var outlet in _outlets)
             {
-                var x = (_windowID % 8 + 1) * 50;
-                var y = (_windowID + 1) * 40;
-                _serializedPosition.vector2Value = new Vector2(x, y);
+                var boundEvent = outlet.boundEvent;
+                var targetCount = boundEvent.GetPersistentEventCount();
+                for (var i = 0; i < targetCount; i++)
+                {
+                    var target = boundEvent.GetPersistentTarget(i);
+                    if (target == null || !(target is Wiring.NodeBase)) continue;
+
+                    var methodName = boundEvent.GetPersistentMethodName(i);
+
+                    var node = map.Get((NodeBase)target);
+                    var inlet = node.GetInletWithName(methodName);
+
+                    if (node != null && inlet != null)
+                        _cachedLinks.Add(new NodeLink(this, outlet, node, inlet));
+                }
             }
         }
 
