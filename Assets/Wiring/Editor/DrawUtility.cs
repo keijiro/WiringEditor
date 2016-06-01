@@ -10,7 +10,7 @@ namespace Wiring.Editor
             var l = Mathf.Min(Mathf.Abs(p1.y - p2.y), 100);
             var p3 = p1 + new Vector2(l, 0);
             var p4 = p2 - new Vector2(l, 0);
-            Handles.DrawBezier(p1, p2, p3, p4, Color.black, null, 4);
+            Handles.DrawBezier(p1, p2, p3, p4, Color.black, null, 2);
         }
     }
 }

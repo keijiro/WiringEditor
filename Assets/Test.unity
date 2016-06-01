@@ -174,11 +174,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 513, y: 166}
+  _wiringNodePosition: {x: 68, y: 133}
   _delay: 1
   _event:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1150299424}
+        m_MethodName: Bang
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2135706607}
+        m_MethodName: Bang
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!4 &481612758
@@ -221,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28aac7020cbd90646a4a4aa75779f47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 429, y: 323}
+  _wiringNodePosition: {x: 423, y: 331}
   _floatEvent:
     m_PersistentCalls:
       m_Calls:
@@ -376,7 +398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 57, y: 223}
+  _wiringNodePosition: {x: 402, y: 188}
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -480,10 +502,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28aac7020cbd90646a4a4aa75779f47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 706, y: 460}
+  _wiringNodePosition: {x: 218, y: 460}
   _floatEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 686900908}
+        m_MethodName: set_modulationValue
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: Wiring.AdderNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!1 &2135706605
@@ -526,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wiringNodePosition: {x: 301, y: 54}
+  _wiringNodePosition: {x: 397, y: 31}
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -534,6 +567,17 @@ MonoBehaviour:
       - m_Target: {fileID: 481612757}
         m_MethodName: Bang
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2105550248}
+        m_MethodName: set_modulationValue
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: 

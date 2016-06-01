@@ -75,21 +75,41 @@ namespace Wiring.Editor
             }
         }
 
+        void ShowConnectionMenu()
+        {
+            var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("New Connection"), false, BeginLinking);
+            menu.ShowAsContext();
+        }
+
+        void BeginLinking()
+        {
+            _state = State.LinkMaking;
+        }
+
         // GUI function for the main view
         void DrawMainViewGUI()
         {
             FeedbackQueue.Reset();
 
-            _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain, true, true);
-
-            // Dummy box for expanding the scroll view
-            // FIXME: this is not acommon approach.
-            GUILayout.Box("", GUILayout.Width(1000), GUILayout.Height(1000));
+            _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain);
 
             // Draw all the nodes.
             BeginWindows();
-            foreach (var node in _nodeList) node.DrawWindowGUI();
+            var bound = Vector2.one * 300;
+            foreach (var node in _nodeList)
+            {
+                node.DrawWindowGUI();
+                bound = Vector2.Max(bound, node.windowPosition);
+            }
             EndWindows();
+
+            // Place a empty box to expand the scroll view.
+            GUILayout.Box(
+                "", EditorStyles.label,
+                GUILayout.Width(bound.x + 256),
+                GUILayout.Height(bound.y + 128)
+            );
 
             // Draw connection lines.
             foreach (var node in _nodeList) node.DrawConnectionLines(_nodeMap);
@@ -105,10 +125,10 @@ namespace Wiring.Editor
 
                 if (_state == State.Ready)
                 {
-                    _state = State.LinkMaking;
                     _linkNode = r.node;
                     _linkInlet = r.inlet;
                     _linkOutlet = r.outlet;
+                    ShowConnectionMenu();
                 }
                 else
                 {
