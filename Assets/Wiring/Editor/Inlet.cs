@@ -26,16 +26,18 @@ namespace Wiring.Editor
             _displayName = ObjectNames.NicifyVariableName(displayName);
         }
 
-        public void DrawGUI(bool updateRect)
+        public bool DrawGUI(bool updateRect)
         {
             EditorGUILayout.BeginHorizontal();
 
-            GUILayout.Button("*");
+            var result = GUILayout.Button("*");
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
 
             EditorGUILayout.LabelField("in: " + _displayName);
 
             EditorGUILayout.EndHorizontal();
+
+            return result;
         }
 
         #endregion

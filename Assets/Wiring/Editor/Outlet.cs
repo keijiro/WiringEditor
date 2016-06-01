@@ -32,16 +32,18 @@ namespace Wiring.Editor
             _event = boundEvent;
         }
 
-        public void DrawGUI(bool updateRect)
+        public bool DrawGUI(bool updateRect)
         {
             EditorGUILayout.BeginHorizontal();
 
             EditorGUILayout.LabelField("out: " + _displayName);
 
-            GUILayout.Button("*");
+            var result = GUILayout.Button("*");
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
 
             EditorGUILayout.EndHorizontal();
+
+            return result;
         }
 
         #endregion

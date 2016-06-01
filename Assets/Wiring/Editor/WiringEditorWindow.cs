@@ -10,8 +10,16 @@ namespace Wiring.Editor
     {
         #region Private fields
 
+        enum State { Ready, LinkMaking }
+
+        State _state;
+
         List<Node> _nodeList;
         NodeMap _nodeMap;
+
+        Node _linkNode;
+        Inlet _linkInlet;
+        Outlet _linkOutlet;
 
         Vector2 _scrollMain;
         Vector2 _scrollSide;
@@ -70,6 +78,8 @@ namespace Wiring.Editor
         // GUI function for the main view
         void DrawMainViewGUI()
         {
+            FeedbackQueue.Reset();
+
             _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain, true, true);
 
             // Dummy box for expanding the scroll view
@@ -84,7 +94,49 @@ namespace Wiring.Editor
             // Draw connection lines.
             foreach (var node in _nodeList) node.DrawConnectionLines(_nodeMap);
 
+            if (_state == State.LinkMaking) DrawWorkingLink();
+
             EditorGUILayout.EndScrollView();
+
+            while (true)
+            {
+                var r = FeedbackQueue.Dequeue();
+                if (r == null) break;
+
+                if (_state == State.Ready)
+                {
+                    _state = State.LinkMaking;
+                    _linkNode = r.node;
+                    _linkInlet = r.inlet;
+                    _linkOutlet = r.outlet;
+                }
+                else
+                {
+                    _state = State.Ready;
+                    _linkNode = null;
+                    _linkInlet = null;
+                    _linkOutlet = null;
+                }
+            }
+        }
+
+        void DrawWorkingLink()
+        {
+            var p1 = (Vector3)_linkNode.windowPosition;
+            var p2 = (Vector3)Event.current.mousePosition;
+
+            if (_linkInlet == null)
+            {
+                p1 += (Vector3)_linkOutlet.buttonRect.center;
+                DrawUtility.Curve(p1, p2);
+            }
+            else
+            {
+                p1 += (Vector3)_linkInlet.buttonRect.center;
+                DrawUtility.Curve(p2, p1);
+            }
+
+            Repaint();
         }
 
         // GUI function for the side bar

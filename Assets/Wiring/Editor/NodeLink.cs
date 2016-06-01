@@ -29,10 +29,7 @@ namespace Wiring.Editor
             p1 += (Vector3)_fromOutlet.buttonRect.center;
             p2 += (Vector3)_toInlet.buttonRect.center;
 
-            var t1 = new Vector3(p2.x, p1.y, 0);
-            var t2 = new Vector3(p1.x, p2.y, 0);
-
-            Handles.DrawBezier(p1, p2, t1, t2, Color.black, null, 3);
+            DrawUtility.Curve(p1, p2);
         }
 
         #endregion

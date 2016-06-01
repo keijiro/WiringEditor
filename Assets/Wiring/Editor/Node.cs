@@ -116,8 +116,13 @@ namespace Wiring.Editor
         {
             var updateRect = (Event.current.type == EventType.Repaint);
 
-            foreach (var i in _inlets) i.DrawGUI(updateRect);
-            foreach (var o in _outlets) o.DrawGUI(updateRect);
+            foreach (var inlet in _inlets)
+                if (inlet.DrawGUI(updateRect))
+                    FeedbackQueue.EnqueueButtonPress(this, inlet);
+
+            foreach (var outlet in _outlets)
+                if (outlet.DrawGUI(updateRect))
+                    FeedbackQueue.EnqueueButtonPress(this, outlet);
 
             GUI.DragWindow();
 
