@@ -11,7 +11,7 @@ namespace Wiring
         #region Private fields
 
         List<NodeHandler> _nodeHandlers;
-        ConnectionDrawer _connectionDrawer;
+        Circuit _circuit;
         Vector2 _scrollMain;
         Vector2 _scrollSide;
 
@@ -33,11 +33,11 @@ namespace Wiring
                 _nodeHandlers.Add(new NodeHandler(n));
 
             // Enumerate all the connections between nodes.
-            _connectionDrawer = new ConnectionDrawer();
-            _connectionDrawer.BeginCaching(_nodeHandlers.AsReadOnly());
+            _circuit = new Circuit();
+            _circuit.BeginScan(_nodeHandlers.AsReadOnly());
             foreach (var h in _nodeHandlers)
-                h.EnumerateConnections(_connectionDrawer);
-            _connectionDrawer.EndCaching();
+                h.EnumerateConnections(_circuit);
+            _circuit.EndScan();
         }
 
         void OnDisable()
@@ -81,7 +81,7 @@ namespace Wiring
             EndWindows();
 
             // Draw connection lines.
-            _connectionDrawer.DrawLines();
+            _circuit.DrawConnectionLines();
 
             EditorGUILayout.EndScrollView();
         }

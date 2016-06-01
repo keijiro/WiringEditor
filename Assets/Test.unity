@@ -174,12 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _editorRect:
-    serializedVersion: 2
-    x: 320
-    y: 181
-    width: 238
-    height: 63
+  _wiringNodePosition: {x: 525, y: 250}
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -237,16 +232,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28aac7020cbd90646a4a4aa75779f47b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _editorRect:
-    serializedVersion: 2
-    x: 433
-    y: 367
-    width: 238
-    height: 83
+  _wiringNodePosition: {x: 485, y: 18}
   _floatEvent:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: AdderNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    m_TypeName: Wiring.AdderNode+FloatEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
 --- !u!4 &686900909
 Transform:
@@ -375,12 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _editorRect:
-    serializedVersion: 2
-    x: 83
-    y: 309
-    width: 238
-    height: 63
+  _wiringNodePosition: {x: 279, y: 374}
   _delay: 1
   _event:
     m_PersistentCalls:
@@ -483,12 +468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 387db3b361104c84fb6d6de5926cad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _editorRect:
-    serializedVersion: 2
-    x: 81
-    y: 48
-    width: 238
-    height: 63
+  _wiringNodePosition: {x: 200, y: 160}
   _delay: 1
   _event:
     m_PersistentCalls:

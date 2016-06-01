@@ -71,7 +71,7 @@ namespace Wiring
         }
 
         // Enumerate all outgoing connections.
-        public void EnumerateConnections(ConnectionDrawer drawer)
+        public void EnumerateConnections(Circuit circuit)
         {
             foreach (var outlet in _outlets)
             {
@@ -82,7 +82,7 @@ namespace Wiring
                     var target = boundEvent.GetPersistentTarget(i);
                     if (target == null || !(target is NodeBase)) continue;
                     var methodName = boundEvent.GetPersistentMethodName(i);
-                    drawer.AddConnection(this, outlet, (NodeBase)target, methodName);
+                    circuit.RegisterConnection(this, outlet, (NodeBase)target, methodName);
                 }
             }
         }
