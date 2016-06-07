@@ -65,6 +65,8 @@ namespace Wiring.Editor
             else if (targetMethodArgs[0].ParameterType == typeof(float))
                 targetAction = System.Delegate.CreateDelegate(typeof(UnityAction<float>), target, targetMethod);
 
+            Undo.RecordObject(_instance, "Added Connection To Node");
+
             if (outlet.boundEvent is UnityEvent)
             {
                 var outEvent = (UnityEvent)outlet.boundEvent;
@@ -97,8 +99,7 @@ namespace Wiring.Editor
             }
 
             _cachedLinks = null;
-
-            _serializedObject.ApplyModifiedProperties();
+            _serializedObject.Update();
         }
 
         // Draw (sub)window GUI.
