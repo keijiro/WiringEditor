@@ -24,7 +24,7 @@ namespace Wiring.Editor
 
         // Window rect
         public Rect windowRect {
-            get { return new Rect(windowPosition, new Vector2(100, 1)); }
+            get { return new Rect(windowPosition, new Vector2(1, 1)); }
         }
 
         #endregion
