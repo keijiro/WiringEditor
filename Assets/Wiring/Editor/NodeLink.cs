@@ -3,7 +3,8 @@ using UnityEditor;
 
 namespace Wiring.Editor
 {
-    // Connection between a pair of nodes
+    // Link between a pair of nodes
+    // Mainly used for caching link infromation.
     public class NodeLink
     {
         #region Public methods
@@ -20,7 +21,7 @@ namespace Wiring.Editor
             _toInlet = toInlet;
         }
 
-        // Draw connection line
+        // Draw a line (curve) between the nodes.
         public void DrawLine()
         {
             var p1 = (Vector3)_fromNode.windowPosition;

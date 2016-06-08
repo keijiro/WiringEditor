@@ -49,9 +49,15 @@ namespace Wiring.Editor
             _queue.Enqueue(new Record(node, outlet));
         }
 
+        public static bool IsEmpty {
+            get {
+                return _queue.Count == 0;
+            }
+        }
+
         public static Record Dequeue()
         {
-            return _queue.Count > 0 ? _queue.Dequeue() : null;
+            return _queue.Dequeue();
         }
 
         static Queue<Record> _queue;

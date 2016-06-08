@@ -8,19 +8,41 @@ namespace Wiring.Editor
     // Editor window class
     public class WiringEditorWindow : EditorWindow
     {
+        #region Wiring state class
+
+        class WiringState
+        {
+            public Node node;
+            public Inlet inlet;
+            public Outlet outlet;
+
+            public WiringState(Node node, Inlet inlet)
+            {
+                this.node = node;
+                this.inlet = inlet;
+            }
+
+            public WiringState(Node node, Outlet outlet)
+            {
+                this.node = node;
+                this.outlet = outlet;
+            }
+        }
+
+        #endregion
+
         #region Private fields
 
-        enum State { Ready, LinkMaking }
-
-        State _state;
-
+        // The list of nodes in the system
         List<Node> _nodeList;
+
+        // NodeBase instance to Node map
         NodeMap _nodeMap;
 
-        Node _linkNode;
-        Inlet _linkInlet;
-        Outlet _linkOutlet;
+        // Wiring state (null = not wiring now)
+        WiringState _wiring;
 
+        // Scroll view positions
         Vector2 _scrollMain;
         Vector2 _scrollSide;
 
@@ -36,10 +58,10 @@ namespace Wiring.Editor
 
         void OnEnable()
         {
-            // Enumerate all the nodes in the scene hierarchy.
             _nodeList = new List<Node>();
             _nodeMap = new NodeMap();
 
+            // Enumerate all the nodes in the scene hierarchy.
             foreach (var instance in Object.FindObjectsOfType<NodeBase>())
             {
                 var node = new Node(instance);
@@ -64,9 +86,42 @@ namespace Wiring.Editor
 
         #endregion
 
+        #region Wiring functions
+
+        // Go into the wiring state.
+        void BeginWiring(object data)
+        {
+            _wiring = (WiringState)data;
+        }
+
+        // Draw the currently working link.
+        void DrawWorkingLink()
+        {
+            var p1 = (Vector3)_wiring.node.windowPosition;
+            var p2 = (Vector3)Event.current.mousePosition;
+
+            if (_wiring.inlet != null)
+            {
+                // Draw a curve from the inlet button.
+                p1 += (Vector3)_wiring.inlet.buttonRect.center;
+                DrawUtility.Curve(p2, p1);
+            }
+            else
+            {
+                // Draw a curve from the outlet button.
+                p1 += (Vector3)_wiring.outlet.buttonRect.center;
+                DrawUtility.Curve(p1, p2);
+            }
+
+            // Request repaint continuously.
+            Repaint();
+        }
+
+        #endregion
+
         #region Private methods
 
-        // Returns the node currently chosen in the window.
+        // Returns the node currently chosen.
         Node activeNode {
             get {
                 foreach (var node in _nodeList)
@@ -75,16 +130,48 @@ namespace Wiring.Editor
             }
         }
 
-        void ShowConnectionMenu()
+        // Show the inlet/outlet context menu .
+        void ShowNodeButtonMenu(Node node, Inlet inlet, Outlet outlet)
         {
             var menu = new GenericMenu();
-            menu.AddItem(new GUIContent("New Connection"), false, BeginLinking);
+
+            if (inlet != null)
+            {
+                menu.AddItem(
+                    new GUIContent("New Connection"), false,
+                    BeginWiring, new WiringState(node, inlet)
+                );
+            }
+            else
+            {
+                menu.AddItem(
+                    new GUIContent("New Connection"), false,
+                    BeginWiring, new WiringState(node, outlet)
+                );
+            }
+
             menu.ShowAsContext();
         }
 
-        void BeginLinking()
+        // Process feedback from the leaf UI elemets.
+        void ProcessUIFeedback(FeedbackQueue.Record fb)
         {
-            _state = State.LinkMaking;
+            if (_wiring == null)
+            {
+                // Not in wiring: show the context menu.
+                ShowNodeButtonMenu(fb.node, fb.inlet, fb.outlet);
+            }
+            else
+            {
+                // Currently in wiring: try to make a link.
+                if (_wiring.inlet != null)
+                    fb.node.TryLinkTo(fb.outlet, _wiring.node, _wiring.inlet);
+                else
+                    _wiring.node.TryLinkTo(_wiring.outlet, fb.node, fb.inlet);
+
+                // End wiring.
+                _wiring =null;
+            }
         }
 
         // GUI function for the main view
@@ -94,74 +181,34 @@ namespace Wiring.Editor
 
             _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain);
 
-            // Draw all the nodes.
+            // Draw all the nodes and make the bounding box.
             BeginWindows();
-            var bound = Vector2.one * 300;
-            foreach (var node in _nodeList)
-            {
+            var bound = Vector2.one * 300; // minimum view size
+            foreach (var node in _nodeList) {
                 node.DrawWindowGUI();
                 bound = Vector2.Max(bound, node.windowPosition);
             }
             EndWindows();
 
-            // Place a empty box to expand the scroll view.
+            // Place an empty box to expand the scroll view.
             GUILayout.Box(
                 "", EditorStyles.label,
                 GUILayout.Width(bound.x + 256),
                 GUILayout.Height(bound.y + 128)
             );
 
-            // Draw connection lines.
-            foreach (var node in _nodeList) node.DrawConnectionLines(_nodeMap);
+            // Draw the link lines.
+            foreach (var node in _nodeList)
+                node.DrawLinkLines(_nodeMap);
 
-            if (_state == State.LinkMaking) DrawWorkingLink();
+            // Draw working link line while wiring.
+            if (_wiring != null) DrawWorkingLink();
 
             EditorGUILayout.EndScrollView();
 
-            while (true)
-            {
-                var r = FeedbackQueue.Dequeue();
-                if (r == null) break;
-
-                if (_state == State.Ready)
-                {
-                    _linkNode = r.node;
-                    _linkInlet = r.inlet;
-                    _linkOutlet = r.outlet;
-                    ShowConnectionMenu();
-                }
-                else
-                {
-                    if (_linkInlet != null)
-                        r.node.TryConnect(r.outlet, _linkNode, _linkInlet);
-                    else
-                        _linkNode.TryConnect(_linkOutlet, r.node, r.inlet);
-
-                    _state = State.Ready;
-                    _linkNode = null;
-                    _linkInlet = null;
-                    _linkOutlet = null;
-                }
-            }
-        }
-
-        void DrawWorkingLink()
-        {
-            var p1 = (Vector3)_linkNode.windowPosition;
-            var p2 = (Vector3)Event.current.mousePosition;
-
-            if (_linkInlet == null)
-            {
-                p1 += (Vector3)_linkOutlet.buttonRect.center;
-                DrawUtility.Curve(p1, p2);
-            }
-            else
-            {
-                p1 += (Vector3)_linkInlet.buttonRect.center;
-                DrawUtility.Curve(p2, p1);
-            }
-
-            Repaint();
+            // Process all the feedback from the leaf UI elements.
+            while (!FeedbackQueue.IsEmpty)
+                ProcessUIFeedback(FeedbackQueue.Dequeue());
         }
 
         // GUI function for the side bar
@@ -169,8 +216,11 @@ namespace Wiring.Editor
         {
             EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
             _scrollSide = EditorGUILayout.BeginScrollView(_scrollSide);
+
+            // Show the inspector of the active node.
             var active = activeNode;
             if (active != null) active.DrawInspectorGUI();
+
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
         }
