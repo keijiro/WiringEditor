@@ -1,41 +1,50 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections.Generic;
 
 namespace Wiring.Editor
 {
+    // Class for organizing the list of patches.
     public static class Organizer
     {
-        static List<Patch> _patchList = new List<Patch>();
+        #region Static public properties and methods
 
+        // The total count of patches.
         public static int patchCount {
-            get { return _patchList.Count; }
+            get { return _patchInstances.Length; }
         }
 
-        public static void ScanPatches()
+        // Reset and scan the patches.
+        public static void Reset()
         {
-            foreach (var patch in Object.FindObjectsOfType<Patch>())
-                _patchList.Add(patch);
+            _patchInstances = Object.FindObjectsOfType<Wiring.Patch>();
         }
 
-        public static Patch GetPatch(int index)
+        // Create an editor representation of the patch at the index.
+        public static Patch RetrievePatch(int index)
         {
-            return _patchList[index];
+            return new Patch(_patchInstances[index]);
         }
 
-        public static string[] GetPatchNames()
+        // Create a list of the names of the patches.
+        public static string[] GetPatchNameList()
         {
-            var temp = new string[_patchList.Count];
-            for (var i = 0; i < _patchList.Count; i++)
-                temp[i] = _patchList[i].name;
-            return temp;
+            return System.Array.ConvertAll(_patchInstances, p => p.name);
         }
 
+        // Determine the index of the given patch.
         public static int GetPatchIndex(Patch patch)
         {
-            for (var i = 0; i < _patchList.Count; i++)
-                if (_patchList[i] == patch) return i;
-            return -1;
+            return System.Array.FindIndex(
+                _patchInstances, i => patch.IsRepresentationOf(i)
+            );
         }
+
+        #endregion
+
+        #region Static private mebers
+
+        static Wiring.Patch[] _patchInstances;
+
+        #endregion
     }
 }

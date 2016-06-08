@@ -13,8 +13,8 @@ namespace Wiring.Editor
         // Try to create a link between two nodes.
         // Returns true if the link is established successfully.
         public static bool TryLinkNodes(
-            NodeBase nodeFrom, UnityEventBase triggerEvent,
-            NodeBase nodeTo, MethodInfo targetMethod
+            Wiring.NodeBase nodeFrom, UnityEventBase triggerEvent,
+            Wiring.NodeBase nodeTo, MethodInfo targetMethod
         )
         {
             // Determine the type of the target action.
@@ -108,8 +108,8 @@ namespace Wiring.Editor
 
         // Remove a link between two nodes.
         public static void RemoveLinkNodes(
-            NodeBase nodeFrom, UnityEventBase triggerEvent,
-            NodeBase nodeTo, MethodInfo targetMethod
+            Wiring.NodeBase nodeFrom, UnityEventBase triggerEvent,
+            Wiring.NodeBase nodeTo, MethodInfo targetMethod
         )
         {
             var methodName = targetMethod.Name;

@@ -36,9 +36,6 @@ namespace Wiring.Editor
         // Currently editing patch.
         Patch _patch;
 
-        // Nodes in the patch.
-        NodeMap _nodeMap;
-
         // Wiring state (null = not wiring now)
         WiringState _wiring;
 
@@ -59,38 +56,44 @@ namespace Wiring.Editor
         void OnEnable()
         {
             // Get the first patch.
-            Organizer.ScanPatches();
+            Organizer.Reset();
             if (Organizer.patchCount > 0)
-                _patch = Organizer.GetPatch(0);
-
-            _nodeMap = new NodeMap(_patch);
+                _patch = Organizer.RetrievePatch(0);
         }
 
         void OnDisable()
         {
             _patch = null;
-            _nodeMap = null;
         }
 
         void OnGUI()
         {
+            // Tool bar
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+            // - Patch selector
             var patchIndex = Organizer.GetPatchIndex(_patch);
-            var newPatchIndex = EditorGUILayout.Popup(patchIndex, Organizer.GetPatchNames(), EditorStyles.toolbarDropDown);
+            var newPatchIndex = EditorGUILayout.Popup(
+                patchIndex, Organizer.GetPatchNameList(), EditorStyles.toolbarDropDown
+            );
 
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
+            // View area
             EditorGUILayout.BeginHorizontal();
+
+            // - Main view
             DrawMainViewGUI();
+
+            // - Property editor
             DrawSideBarGUI();
+
             EditorGUILayout.EndHorizontal();
 
-            if (patchIndex != newPatchIndex)
-            {
-                _patch = Organizer.GetPatch(newPatchIndex);
-                _nodeMap = new NodeMap(_patch);
+            // Re-initialize the editor if the patch selection was changed.
+            if (patchIndex != newPatchIndex) {
+                _patch = Organizer.RetrievePatch(newPatchIndex);
                 Repaint();
             }
         }
@@ -142,7 +145,7 @@ namespace Wiring.Editor
         // Returns the node currently chosen.
         Node activeNode {
             get {
-                foreach (var node in _nodeMap.nodeList)
+                foreach (var node in _patch.nodeList)
                     if (node.isActive) return node;
                 return null;
             }
@@ -162,9 +165,9 @@ namespace Wiring.Editor
                 );
 
                 // Disconnection items
-                foreach (var targetNode in _nodeMap.nodeList)
+                foreach (var targetNode in _patch.nodeList)
                 {
-                    var link = targetNode.TryGetLinkTo(node, inlet, _nodeMap);
+                    var link = targetNode.TryGetLinkTo(node, inlet, _patch);
                     if (link == null) continue;
 
                     var label = "Disconnect/" + targetNode.displayName;
@@ -180,7 +183,7 @@ namespace Wiring.Editor
                 );
 
                 // Disconnection items
-                foreach (var link in node.EnumerateLinksFrom(outlet, _nodeMap))
+                foreach (var link in node.EnumerateLinksFrom(outlet, _patch))
                 {
                     var label = "Disconnect/" + link.toNode.displayName;
                     menu.AddItem(new GUIContent(label), false, RemoveLink, link);
@@ -221,7 +224,7 @@ namespace Wiring.Editor
             // Draw all the nodes and make the bounding box.
             BeginWindows();
             var bound = Vector2.one * 300; // minimum view size
-            foreach (var node in _nodeMap.nodeList) {
+            foreach (var node in _patch.nodeList) {
                 node.DrawWindowGUI();
                 bound = Vector2.Max(bound, node.windowPosition);
             }
@@ -235,8 +238,8 @@ namespace Wiring.Editor
             );
 
             // Draw the link lines.
-            foreach (var node in _nodeMap.nodeList)
-                node.DrawLinkLines(_nodeMap);
+            foreach (var node in _patch.nodeList)
+                node.DrawLinkLines(_patch);
 
             // Draw working link line while wiring.
             if (_wiring != null) DrawWorkingLink();

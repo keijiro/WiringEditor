@@ -32,7 +32,7 @@ namespace Wiring.Editor
         #region Public methods
 
         // Constructor
-        public Node(NodeBase instance)
+        public Node(Wiring.NodeBase instance)
         {
             _instance = instance;
             _windowID = _windowCounter++;
@@ -49,9 +49,9 @@ namespace Wiring.Editor
         }
 
         // Enumerate all the links from a given outlet.
-        public NodeLink[] EnumerateLinksFrom(Outlet outlet, NodeMap map)
+        public NodeLink[] EnumerateLinksFrom(Outlet outlet, Patch patch)
         {
-            if (_cachedLinks == null) CacheLinks(map);
+            if (_cachedLinks == null) CacheLinks(patch);
 
             var temp = new List<NodeLink>();
 
@@ -62,9 +62,9 @@ namespace Wiring.Editor
         }
 
         // If this node has a link to a given inlet, return it.
-        public NodeLink TryGetLinkTo(Node targetNode, Inlet inlet, NodeMap map)
+        public NodeLink TryGetLinkTo(Node targetNode, Inlet inlet, Patch patch)
         {
-            if (_cachedLinks == null) CacheLinks(map);
+            if (_cachedLinks == null) CacheLinks(patch);
 
             foreach (var link in _cachedLinks)
                 if (link.toInlet == inlet) return link;
@@ -136,9 +136,9 @@ namespace Wiring.Editor
         }
 
         // Draw lines of the links from this node.
-        public void DrawLinkLines(NodeMap map)
+        public void DrawLinkLines(Patch patch)
         {
-            if (_cachedLinks == null) CacheLinks(map);
+            if (_cachedLinks == null) CacheLinks(patch);
             foreach (var link in _cachedLinks) link.DrawLine();
         }
 
@@ -261,7 +261,7 @@ namespace Wiring.Editor
         }
 
         // Enumerate all links from the outlets and cache them.
-        void CacheLinks(NodeMap map)
+        void CacheLinks(Patch patch)
         {
             _cachedLinks = new List<NodeLink>();
 
@@ -278,7 +278,7 @@ namespace Wiring.Editor
                     if (target == null || !(target is Wiring.NodeBase)) continue;
 
                     // Try to retrieve the linked inlet.
-                    var targetNode = map.GetNode((NodeBase)target);
+                    var targetNode = patch.GetNodeOfInstance((Wiring.NodeBase)target);
                     var methodName = boundEvent.GetPersistentMethodName(i);
                     var inlet = targetNode.GetInletWithName(methodName);
 
