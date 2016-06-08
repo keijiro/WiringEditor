@@ -106,6 +106,26 @@ namespace Wiring.Editor
             return false; // trigger-target mismatch
         }
 
+        // Remove a link between two nodes.
+        public static void RemoveLinkNodes(
+            NodeBase nodeFrom, UnityEventBase triggerEvent,
+            NodeBase nodeTo, MethodInfo targetMethod
+        )
+        {
+            var methodName = targetMethod.Name;
+
+            var eventCount = triggerEvent.GetPersistentEventCount();
+            for (var i = 0; i < eventCount; i++)
+            {
+                if (nodeTo == triggerEvent.GetPersistentTarget(i) &&
+                    methodName == triggerEvent.GetPersistentMethodName(i))
+                {
+                    UnityEventTools.RemovePersistentListener(triggerEvent, i);
+                    break;
+                }
+            }
+        }
+
         #endregion
 
         #region Private functions

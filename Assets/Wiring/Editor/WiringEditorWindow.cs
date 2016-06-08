@@ -94,6 +94,13 @@ namespace Wiring.Editor
             _wiring = (WiringState)data;
         }
 
+        // Remove a link between a pair of nodes.
+        void RemoveLink(object data)
+        {
+            var link = (NodeLink)data;
+            link.fromNode.RemoveLink(link.fromOutlet, link.toNode, link.toInlet);
+        }
+
         // Draw the currently working link.
         void DrawWorkingLink()
         {
@@ -137,17 +144,36 @@ namespace Wiring.Editor
 
             if (inlet != null)
             {
+                // "New Connection"
                 menu.AddItem(
                     new GUIContent("New Connection"), false,
                     BeginWiring, new WiringState(node, inlet)
                 );
+
+                // Disconnection items
+                foreach (var targetNode in _nodeList)
+                {
+                    var link = targetNode.TryGetLinkTo(node, inlet, _nodeMap);
+                    if (link == null) continue;
+
+                    var label = "Disconnect/" + targetNode.displayName;
+                    menu.AddItem(new GUIContent(label), false, RemoveLink, link);
+                }
             }
             else
             {
+                // "New Connection"
                 menu.AddItem(
                     new GUIContent("New Connection"), false,
                     BeginWiring, new WiringState(node, outlet)
                 );
+
+                // Disconnection items
+                foreach (var link in node.EnumerateLinksFrom(outlet, _nodeMap))
+                {
+                    var label = "Disconnect/" + link.toNode.displayName;
+                    menu.AddItem(new GUIContent(label), false, RemoveLink, link);
+                }
             }
 
             menu.ShowAsContext();

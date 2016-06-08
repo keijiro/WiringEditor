@@ -7,7 +7,13 @@ namespace Wiring.Editor
     // Mainly used for caching link infromation.
     public class NodeLink
     {
-        #region Public methods
+        #region Public properties and methods
+
+        // Accessors
+        public Node fromNode     { get { return _fromNode;   } }
+        public Node toNode       { get { return _toNode;     } }
+        public Outlet fromOutlet { get { return _fromOutlet; } }
+        public Inlet toInlet     { get { return _toInlet;    } }
 
         // Constructor
         public NodeLink(

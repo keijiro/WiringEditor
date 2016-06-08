@@ -12,6 +12,11 @@ namespace Wiring.Editor
     {
         #region Public properties
 
+        // Display name used in UIs
+        public string displayName {
+            get { return _instance.name; }
+        }
+
         // Is this window selected in the editor?
         public bool isActive {
             get { return _activeWindowID == _windowID; }
@@ -43,6 +48,30 @@ namespace Wiring.Editor
             ValidatePosition();
         }
 
+        // Enumerate all the links from a given outlet.
+        public NodeLink[] EnumerateLinksFrom(Outlet outlet, NodeMap map)
+        {
+            if (_cachedLinks == null) CacheLinks(map);
+
+            var temp = new List<NodeLink>();
+
+            foreach (var link in _cachedLinks)
+                if (link.fromOutlet == outlet) temp.Add(link);
+
+            return temp.ToArray();
+        }
+
+        // If this node has a link to a given inlet, return it.
+        public NodeLink TryGetLinkTo(Node targetNode, Inlet inlet, NodeMap map)
+        {
+            if (_cachedLinks == null) CacheLinks(map);
+
+            foreach (var link in _cachedLinks)
+                if (link.toInlet == inlet) return link;
+
+            return null;
+        }
+
         // Try to make a link from the outlet to a given node/inlet.
         public void TryLinkTo(Outlet outlet, Node targetNode, Inlet inlet)
         {
@@ -62,6 +91,24 @@ namespace Wiring.Editor
                 _cachedLinks = null;
                 _serializedObject.Update();
             }
+        }
+
+        public void RemoveLink(Outlet outlet, Node targetNode, Inlet inlet)
+        {
+            Undo.RecordObject(_instance, "Remove Link");
+
+            // Retrieve the target method (inlet) information.
+            var targetMethod = targetNode._instance.GetType().GetMethod(inlet.methodName);
+
+            // Remove the link.
+            LinkUtility.RemoveLinkNodes(
+                _instance, outlet.boundEvent,
+                targetNode._instance, targetMethod
+            );
+
+            // Clear the cache and update information.
+            _cachedLinks = null;
+            _serializedObject.Update();
         }
 
         // Draw (sub)window GUI.
