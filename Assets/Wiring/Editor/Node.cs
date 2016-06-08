@@ -278,7 +278,7 @@ namespace Wiring.Editor
                     if (target == null || !(target is Wiring.NodeBase)) continue;
 
                     // Try to retrieve the linked inlet.
-                    var targetNode = map.Get((NodeBase)target);
+                    var targetNode = map.GetNode((NodeBase)target);
                     var methodName = boundEvent.GetPersistentMethodName(i);
                     var inlet = targetNode.GetInletWithName(methodName);
 

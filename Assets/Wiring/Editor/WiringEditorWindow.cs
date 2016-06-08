@@ -33,10 +33,10 @@ namespace Wiring.Editor
 
         #region Private fields
 
-        // The list of nodes in the system
-        List<Node> _nodeList;
+        // Currently editing patch.
+        Patch _patch;
 
-        // NodeBase instance to Node map
+        // Nodes in the patch.
         NodeMap _nodeMap;
 
         // Wiring state (null = not wiring now)
@@ -58,30 +58,41 @@ namespace Wiring.Editor
 
         void OnEnable()
         {
-            _nodeList = new List<Node>();
-            _nodeMap = new NodeMap();
+            // Get the first patch.
+            Organizer.ScanPatches();
+            if (Organizer.patchCount > 0)
+                _patch = Organizer.GetPatch(0);
 
-            // Enumerate all the nodes in the scene hierarchy.
-            foreach (var instance in Object.FindObjectsOfType<NodeBase>())
-            {
-                var node = new Node(instance);
-                _nodeList.Add(node);
-                _nodeMap.Add(instance, node);
-            }
+            _nodeMap = new NodeMap(_patch);
         }
 
         void OnDisable()
         {
-            _nodeList = null;
+            _patch = null;
             _nodeMap = null;
         }
 
         void OnGUI()
         {
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+            var patchIndex = Organizer.GetPatchIndex(_patch);
+            var newPatchIndex = EditorGUILayout.Popup(patchIndex, Organizer.GetPatchNames(), EditorStyles.toolbarDropDown);
+
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.BeginHorizontal();
             DrawMainViewGUI();
             DrawSideBarGUI();
             EditorGUILayout.EndHorizontal();
+
+            if (patchIndex != newPatchIndex)
+            {
+                _patch = Organizer.GetPatch(newPatchIndex);
+                _nodeMap = new NodeMap(_patch);
+                Repaint();
+            }
         }
 
         #endregion
@@ -131,7 +142,7 @@ namespace Wiring.Editor
         // Returns the node currently chosen.
         Node activeNode {
             get {
-                foreach (var node in _nodeList)
+                foreach (var node in _nodeMap.nodeList)
                     if (node.isActive) return node;
                 return null;
             }
@@ -151,7 +162,7 @@ namespace Wiring.Editor
                 );
 
                 // Disconnection items
-                foreach (var targetNode in _nodeList)
+                foreach (var targetNode in _nodeMap.nodeList)
                 {
                     var link = targetNode.TryGetLinkTo(node, inlet, _nodeMap);
                     if (link == null) continue;
@@ -210,7 +221,7 @@ namespace Wiring.Editor
             // Draw all the nodes and make the bounding box.
             BeginWindows();
             var bound = Vector2.one * 300; // minimum view size
-            foreach (var node in _nodeList) {
+            foreach (var node in _nodeMap.nodeList) {
                 node.DrawWindowGUI();
                 bound = Vector2.Max(bound, node.windowPosition);
             }
@@ -224,7 +235,7 @@ namespace Wiring.Editor
             );
 
             // Draw the link lines.
-            foreach (var node in _nodeList)
+            foreach (var node in _nodeMap.nodeList)
                 node.DrawLinkLines(_nodeMap);
 
             // Draw working link line while wiring.
