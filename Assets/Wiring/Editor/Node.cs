@@ -119,7 +119,8 @@ namespace Wiring.Editor
 
             // Show the window.
             var title = _instance.name + " (" + _instance.GetType().Name + ")";
-            var newRect = GUILayout.Window(_windowID, rect, OnWindowGUI, title);
+            var style = isActive ? GUIStyles.activeNode : GUIStyles.node;
+            var newRect = GUILayout.Window(_windowID, rect, OnWindowGUI, title, style);
 
             // Update the serialized info if the position was changed.
             if (newRect.position != rect.position) {

@@ -68,6 +68,11 @@ namespace Wiring.Editor
 
         void OnGUI()
         {
+            if (_patch == null) {
+                DrawNoPatchMessage();
+                return;
+            }
+
             // Tool bar
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
@@ -145,8 +150,9 @@ namespace Wiring.Editor
         // Returns the node currently chosen.
         Node activeNode {
             get {
-                foreach (var node in _patch.nodeList)
-                    if (node.isActive) return node;
+                if (_patch != null)
+                    foreach (var node in _patch.nodeList)
+                        if (node.isActive) return node;
                 return null;
             }
         }
@@ -219,7 +225,12 @@ namespace Wiring.Editor
         {
             FeedbackQueue.Reset();
 
-            _scrollMain = EditorGUILayout.BeginScrollView(_scrollMain);
+            _scrollMain = EditorGUILayout.BeginScrollView(
+                _scrollMain, false, false,
+                GUIStyles.horizontalScrollbar,
+                GUIStyles.verticalScrollbar,
+                GUIStyles.background
+            );
 
             // Draw all the nodes and make the bounding box.
             BeginWindows();
@@ -263,6 +274,28 @@ namespace Wiring.Editor
 
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
+        }
+
+        // "No patch" message
+        void DrawNoPatchMessage()
+        {
+            GUILayout.BeginVertical();
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("No patch found", EditorStyles.largeLabel);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Button("Create New Patch"); // FIXME: not functioning
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
         }
 
         #endregion

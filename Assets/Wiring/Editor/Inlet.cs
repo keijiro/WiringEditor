@@ -30,10 +30,10 @@ namespace Wiring.Editor
         {
             EditorGUILayout.BeginHorizontal();
 
-            var result = GUILayout.Button("*");
+            var result = GUILayout.Button("  ", GUIStyles.button);
             if (updateRect) _buttonRect = GUILayoutUtility.GetLastRect();
 
-            EditorGUILayout.LabelField("in: " + _displayName);
+            EditorGUILayout.LabelField(_displayName, GUIStyles.labelLeft);
 
             EditorGUILayout.EndHorizontal();
 
