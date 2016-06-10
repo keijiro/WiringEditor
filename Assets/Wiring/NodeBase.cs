@@ -2,6 +2,7 @@
 #pragma warning disable 0414
 
 using UnityEngine;
+using UnityEngine.Events;
 using System;
 
 namespace Wiring
@@ -25,6 +26,18 @@ namespace Wiring
     {
         [SerializeField, HideInInspector]
         Vector2 _wiringNodePosition = uninitializedNodePosition;
+
+        [System.Serializable]
+        public class VoidEvent : UnityEvent {}
+
+        [System.Serializable]
+        public class BoolEvent : UnityEvent<bool> {}
+
+        [System.Serializable]
+        public class IntEvent : UnityEvent<int> {}
+
+        [System.Serializable]
+        public class FloatEvent : UnityEvent<float> {}
 
         static public Vector2 uninitializedNodePosition {
             get { return new Vector2(-1000, -1000); }

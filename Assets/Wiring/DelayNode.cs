@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using System.Collections;
 
 namespace Wiring
 {
+    [AddComponentMenu("Wiring/Timing/Delay")]
     public class DelayNode : NodeBase
     {
         [SerializeField]
         float _delay = 1;
 
         [SerializeField, Outlet]
-        UnityEvent _event;
+        VoidEvent _event = new VoidEvent();
 
         [Inlet]
         public void Bang()

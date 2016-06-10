@@ -22,6 +22,11 @@ namespace Wiring.Editor
             get { return _activeWindowID == _windowID; }
         }
 
+        // Is this window focused (accepting keyboard input)?
+        public bool isFocused {
+            get { return EditorGUIUtility.keyboardControl == _controlID; }
+        }
+
         // Window position
         public Vector2 windowPosition {
             get { return _serializedPosition.vector2Value; }
@@ -46,6 +51,13 @@ namespace Wiring.Editor
             _serializedObject = new UnityEditor.SerializedObject(_instance);
             _serializedPosition = _serializedObject.FindProperty("_wiringNodePosition");
             ValidatePosition();
+        }
+
+        // Remove itself from the patch.
+        public void RemoveFromPatch(Patch patch)
+        {
+            //GameObject.DestroyImmediate(_instance.gameObject);
+            Undo.DestroyObjectImmediate(_instance.gameObject);
         }
 
         // Enumerate all the links from a given outlet.
@@ -119,11 +131,12 @@ namespace Wiring.Editor
 
             // Show the window.
             var title = _instance.name + " (" + _instance.GetType().Name + ")";
-            var style = isActive ? GUIStyles.activeNode : GUIStyles.node;
+            var style = isFocused ? GUIStyles.activeNode : GUIStyles.node;
             var newRect = GUILayout.Window(_windowID, rect, OnWindowGUI, title, style);
 
             // Update the serialized info if the position was changed.
             if (newRect.position != rect.position) {
+                _serializedObject.Update();
                 _serializedPosition.vector2Value = newRect.position;
                 _serializedObject.ApplyModifiedProperties();
             }
@@ -137,10 +150,19 @@ namespace Wiring.Editor
         }
 
         // Draw lines of the links from this node.
-        public void DrawLinkLines(Patch patch)
+        public bool DrawLinkLines(Patch patch)
         {
+            // Check if the position information is ready.
+            if (_inlets.Count > 0 &&
+                _inlets[0].buttonRect.center == Vector2.zero) return false;
+
+            if (_outlets.Count > 0 &&
+                _outlets[0].buttonRect.center == Vector2.zero) return false;
+
+            // Make cache and draw all the lines.
             if (_cachedLinks == null) CacheLinks(patch);
             foreach (var link in _cachedLinks) link.DrawLine();
+            return true;
         }
 
         #endregion
@@ -163,6 +185,7 @@ namespace Wiring.Editor
 
         // GUI
         int _windowID;
+        int _controlID;
         UnityEditor.Editor _editor; // FIXME: should be handled in WiringEditorWindow
 
         // Window ID of currently selected window
@@ -185,20 +208,36 @@ namespace Wiring.Editor
             foreach (var inlet in _inlets)
                 if (inlet.DrawGUI(rectUpdate))
                     // The inlet button was pressed; nofity via FeedbackQueue.
-                    FeedbackQueue.EnqueueButtonPress(this, inlet);
+                    FeedbackQueue.Enqueue(new FeedbackQueue.InletButtonRecord(this, inlet));
 
             // Draw the outlet labels and buttons.
             foreach (var outlet in _outlets)
                 if (outlet.DrawGUI(rectUpdate))
                     // The outlet button was pressed; nofity via FeedbackQueue.
-                    FeedbackQueue.EnqueueButtonPress(this, outlet);
+                    FeedbackQueue.Enqueue(new FeedbackQueue.OutletButtonRecord(this, outlet));
 
             // The standard GUI behavior.
+            _controlID = GUIUtility.GetControlID(FocusType.Keyboard);
             GUI.DragWindow();
 
-            // Is this window clicked? Then assume it's active one.
+            // Is this window clicked?
             if (Event.current.type == EventType.Used)
+            {
+                // Then assume it's active one.
                 _activeWindowID = id;
+                // Grab the keyboard focus.
+                EditorGUIUtility.keyboardControl = _controlID;
+            }
+
+            var e = Event.current;
+
+            if (e.GetTypeForControl(_controlID) == EventType.ValidateCommand)
+                if (e.commandName == "Delete" || e.commandName == "SoftDelete")
+                    e.Use();
+
+            if (e.GetTypeForControl(_controlID) == EventType.ExecuteCommand)
+                if (e.commandName == "Delete" || e.commandName == "SoftDelete")
+                    FeedbackQueue.Enqueue(new FeedbackQueue.DeleteNodeRecord(this));
         }
 
         // Validate the window position.
@@ -210,7 +249,7 @@ namespace Wiring.Editor
             {
                 // Calculate the initial window position with the window ID.
                 var x = (_windowID % 8 + 1) * 50;
-                var y = (_windowID + 1) * 40;
+                var y = (_windowID % 32 + 1) * 20;
                 _serializedPosition.vector2Value = new Vector2(x, y);
             }
         }

@@ -33,13 +33,17 @@ namespace Wiring.Editor
 
         #region Private fields
 
-        // Currently editing patch.
+        // Currently editing patch
         Patch _patch;
+
+        // Helper objects
+        NodeFactory _factory;
 
         // Wiring state (null = not wiring now)
         WiringState _wiring;
 
-        // Scroll view positions
+        // View size and positions
+        Vector2 _mainViewSize;
         Vector2 _scrollMain;
         Vector2 _scrollSide;
 
@@ -55,15 +59,20 @@ namespace Wiring.Editor
 
         void OnEnable()
         {
-            // Get the first patch.
-            Organizer.Reset();
-            if (Organizer.patchCount > 0)
-                _patch = Organizer.RetrievePatch(0);
+            ResetState();
+            Undo.undoRedoPerformed += ResetState;
         }
 
         void OnDisable()
         {
             _patch = null;
+            _factory = null;
+            Undo.undoRedoPerformed -= ResetState;
+        }
+
+        void OnFocus()
+        {
+            ResetState();
         }
 
         void OnGUI()
@@ -76,6 +85,10 @@ namespace Wiring.Editor
             // Tool bar
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+            // - Create node menu
+            _factory.CreateNodeMenuGUI();
+            GUILayout.Space(100);
+
             // - Patch selector
             var patchIndex = Organizer.GetPatchIndex(_patch);
             var newPatchIndex = EditorGUILayout.Popup(
@@ -83,6 +96,7 @@ namespace Wiring.Editor
             );
 
             GUILayout.FlexibleSpace();
+
             EditorGUILayout.EndHorizontal();
 
             // View area
@@ -99,6 +113,7 @@ namespace Wiring.Editor
             // Re-initialize the editor if the patch selection was changed.
             if (patchIndex != newPatchIndex) {
                 _patch = Organizer.RetrievePatch(newPatchIndex);
+                _factory = new NodeFactory(_patch);
                 Repaint();
             }
         }
@@ -157,6 +172,36 @@ namespace Wiring.Editor
             }
         }
 
+        // Reset the internal state.
+        void ResetState()
+        {
+            Organizer.Reset();
+
+            if (_patch == null || !_patch.isValid)
+                RetrieveDefaultPatch();
+            else
+                _patch.Rescan();
+
+            _mainViewSize = Vector2.one * 300; // minimum view size
+
+            Repaint();
+        }
+
+        // Retrieve the default patch (first available one).
+        void RetrieveDefaultPatch()
+        {
+            if (Organizer.patchCount > 0)
+            {
+                _patch = Organizer.RetrievePatch(0);
+                _factory = new NodeFactory(_patch);
+            }
+            else
+            {
+                _patch = null;
+                _factory = null;
+            }
+        }
+
         // Show the inlet/outlet context menu .
         void ShowNodeButtonMenu(Node node, Inlet inlet, Outlet outlet)
         {
@@ -200,24 +245,42 @@ namespace Wiring.Editor
         }
 
         // Process feedback from the leaf UI elemets.
-        void ProcessUIFeedback(FeedbackQueue.Record fb)
+        void ProcessUIFeedback(FeedbackQueue.RecordBase record)
         {
-            if (_wiring == null)
+            // Delete request
+            if (record is FeedbackQueue.DeleteNodeRecord)
             {
-                // Not in wiring: show the context menu.
-                ShowNodeButtonMenu(fb.node, fb.inlet, fb.outlet);
+                var node = ((FeedbackQueue.DeleteNodeRecord)record).node;
+                node.RemoveFromPatch(_patch);
+                ResetState();
             }
-            else
-            {
-                // Currently in wiring: try to make a link.
-                if (_wiring.inlet != null)
-                    fb.node.TryLinkTo(fb.outlet, _wiring.node, _wiring.inlet);
-                else
-                    _wiring.node.TryLinkTo(_wiring.outlet, fb.node, fb.inlet);
 
-                // End wiring.
-                _wiring =null;
+            // Inlet button pressed
+            if (record is FeedbackQueue.InletButtonRecord)
+            {
+                var info = (FeedbackQueue.InletButtonRecord)record;
+                if (_wiring == null)
+                    // Not in wiring: show the context menu.
+                    ShowNodeButtonMenu(info.node, info.inlet, null);
+                else
+                    // Currently in wiring: try to make a link.
+                    _wiring.node.TryLinkTo(_wiring.outlet, info.node, info.inlet);
             }
+
+            // Outlet button pressed
+            if (record is FeedbackQueue.OutletButtonRecord)
+            {
+                var info = (FeedbackQueue.OutletButtonRecord)record;
+                if (_wiring == null)
+                    // Not in wiring: show the context menu.
+                    ShowNodeButtonMenu(info.node, null, info.outlet);
+                else
+                    // Currently in wiring: try to make a link.
+                    info.node.TryLinkTo(info.outlet, _wiring.node, _wiring.inlet);
+            }
+
+            // Force to end wiring.
+            _wiring = null;
         }
 
         // GUI function for the main view
@@ -232,25 +295,30 @@ namespace Wiring.Editor
                 GUIStyles.background
             );
 
+            // Draw the link lines.
+            if (Event.current.type == EventType.Repaint)
+                foreach (var node in _patch.nodeList)
+                    if (!node.DrawLinkLines(_patch))
+                    {
+                        // Request repaint if position info is not ready.
+                        Repaint();
+                        break;
+                    }
+
             // Draw all the nodes and make the bounding box.
             BeginWindows();
-            var bound = Vector2.one * 300; // minimum view size
             foreach (var node in _patch.nodeList) {
                 node.DrawWindowGUI();
-                bound = Vector2.Max(bound, node.windowPosition);
+                _mainViewSize = Vector2.Max(_mainViewSize, node.windowPosition);
             }
             EndWindows();
 
             // Place an empty box to expand the scroll view.
             GUILayout.Box(
                 "", EditorStyles.label,
-                GUILayout.Width(bound.x + 256),
-                GUILayout.Height(bound.y + 128)
+                GUILayout.Width(_mainViewSize.x + 256),
+                GUILayout.Height(_mainViewSize.y + 128)
             );
-
-            // Draw the link lines.
-            foreach (var node in _patch.nodeList)
-                node.DrawLinkLines(_patch);
 
             // Draw working link line while wiring.
             if (_wiring != null) DrawWorkingLink();
@@ -270,7 +338,11 @@ namespace Wiring.Editor
 
             // Show the inspector of the active node.
             var active = activeNode;
-            if (active != null) active.DrawInspectorGUI();
+            if (active != null) {
+                EditorGUILayout.TextField("Node Name", active.displayName);
+                EditorGUILayout.Space();
+                active.DrawInspectorGUI();
+            }
 
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();

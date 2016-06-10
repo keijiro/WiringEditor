@@ -12,6 +12,11 @@ namespace Wiring.Editor
     {
         #region Public properties and methods
 
+        // Validity check
+        public bool isValid {
+            get { return _instance != null; }
+        }
+
         // Read-only node list
         public ReadOnlyCollection<Node> nodeList {
             get { return new ReadOnlyCollection<Node>(_nodeList); }
@@ -24,13 +29,7 @@ namespace Wiring.Editor
             _nodeList = new List<Node>();
             _instanceIDToNodeMap = new Dictionary<int, Node>();
 
-            // Enumerate all the node instances.
-            foreach (var i in instance.GetComponentsInChildren<Wiring.NodeBase>())
-            {
-                var node = new Node(i);
-                _nodeList.Add(node);
-                _instanceIDToNodeMap.Add(i.GetInstanceID(), node);
-            }
+            Rescan();
         }
 
         // Check if this is a representation of the given patch instance.
@@ -43,6 +42,33 @@ namespace Wiring.Editor
         public Node GetNodeOfInstance(Wiring.NodeBase instance)
         {
             return _instanceIDToNodeMap[instance.GetInstanceID()];
+        }
+
+        // Rescan the patch.
+        public void Rescan()
+        {
+            _nodeList.Clear();
+            _instanceIDToNodeMap.Clear();
+
+            // Enumerate all the node instances.
+            foreach (var i in _instance.GetComponentsInChildren<Wiring.NodeBase>())
+            {
+                var node = new Node(i);
+                _nodeList.Add(node);
+                _instanceIDToNodeMap.Add(i.GetInstanceID(), node);
+            }
+        }
+
+        // Add a node instance to the patch.
+        public void AddNodeInstance(Wiring.NodeBase nodeInstance)
+        {
+            // Append to the hierarchy.
+            nodeInstance.transform.parent = _instance.transform;
+
+            // Register to this patch representation.
+            var node = new Node(nodeInstance);
+            _nodeList.Add(node);
+            _instanceIDToNodeMap.Add(nodeInstance.GetInstanceID(), node);
         }
 
         #endregion

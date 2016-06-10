@@ -1,13 +1,10 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Wiring
 {
+    [AddComponentMenu("Wiring/Compound/Adder")]
     public class AdderNode : NodeBase
     {
-        [System.Serializable]
-        public class FloatEvent : UnityEvent<float> {}
-
         [Inlet]
         public float inputValue {
             set {
@@ -25,7 +22,7 @@ namespace Wiring
         }
 
         [SerializeField, Outlet]
-        public FloatEvent _floatEvent;
+        public FloatEvent _floatEvent = new FloatEvent();
 
         float _lastInputValue;
         float _lastModulationValue;

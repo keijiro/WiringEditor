@@ -4,63 +4,77 @@ using System.Collections.Generic;
 
 namespace Wiring.Editor
 {
-    // Queue class used to feedback user actions from UI component classes.
-    public class FeedbackQueue
+    // Queue class used to feedback user actions from UI controls
+    public static class FeedbackQueue
     {
         #region Feedback record class
 
-        public class Record
+        // Base record class
+        public abstract class RecordBase {}
+
+        // Record class: delete a node
+        public class DeleteNodeRecord : RecordBase
         {
-            public Node node { get { return _node; } }
-            public Inlet inlet { get { return _inlet; } }
-            public Outlet outlet { get { return _outlet; } }
+            public Node node { get; private set; }
 
-            public Record(Node node, Inlet inlet)
+            public DeleteNodeRecord(Node node)
             {
-                _node = node;
-                _inlet = inlet;
+                this.node = node;
             }
+        }
 
-            public Record(Node node, Outlet outlet)
+        // Record class: an inlet button was pressed
+        public class InletButtonRecord : RecordBase
+        {
+            public Node node { get; private set; }
+            public Inlet inlet { get; private set; }
+
+            public InletButtonRecord(Node node, Inlet inlet)
             {
-                _node = node;
-                _outlet = outlet;
+                this.node = node;
+                this.inlet = inlet;
             }
+        }
 
-            Node _node;
-            Inlet _inlet;
-            Outlet _outlet;
+        // Record class: an outlet button was pressed
+        public class OutletButtonRecord : RecordBase
+        {
+            public Node node { get; private set; }
+            public Outlet outlet { get; private set; }
+
+            public OutletButtonRecord(Node node, Outlet outlet)
+            {
+                this.node = node;
+                this.outlet = outlet;
+            }
         }
 
         #endregion
 
-        public static void Reset()
-        {
-            _queue = new Queue<Record>();
-        }
-
-        public static void EnqueueButtonPress(Node node, Inlet inlet)
-        {
-            _queue.Enqueue(new Record(node, inlet));
-        }
-
-        public static void EnqueueButtonPress(Node node, Outlet outlet)
-        {
-            _queue.Enqueue(new Record(node, outlet));
-        }
+        #region Queuing properties and methods
 
         public static bool IsEmpty {
-            get {
-                return _queue.Count == 0;
-            }
+            get { return _queue.Count == 0; }
         }
 
-        public static Record Dequeue()
+        public static void Reset()
+        {
+            _queue.Clear();
+        }
+
+        public static RecordBase Dequeue()
         {
             return _queue.Dequeue();
         }
 
-        static Queue<Record> _queue;
+        public static void Enqueue(RecordBase record)
+        {
+            _queue.Enqueue(record);
+        }
+
+        static Queue<RecordBase> _queue = new Queue<RecordBase>();
+
+        #endregion
     }
 }
 
