@@ -61,6 +61,7 @@ namespace Wiring.Editor
         {
             ResetState();
             Undo.undoRedoPerformed += ResetState;
+            EditorApplication.playmodeStateChanged += ResetState;
         }
 
         void OnDisable()
@@ -68,6 +69,7 @@ namespace Wiring.Editor
             _patch = null;
             _factory = null;
             Undo.undoRedoPerformed -= ResetState;
+            EditorApplication.playmodeStateChanged -= ResetState;
         }
 
         void OnFocus()
@@ -175,14 +177,24 @@ namespace Wiring.Editor
         // Reset the internal state.
         void ResetState()
         {
-            Organizer.Reset();
+            if (!EditorApplication.isPlaying &&
+                !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                Organizer.Reset();
 
-            if (_patch == null || !_patch.isValid)
-                RetrieveDefaultPatch();
+                if (_patch == null || !_patch.isValid)
+                    RetrieveDefaultPatch();
+                else
+                    _patch.Rescan();
+
+                _mainViewSize = Vector2.one * 300; // minimum view size
+            }
             else
-                _patch.Rescan();
-
-            _mainViewSize = Vector2.one * 300; // minimum view size
+            {
+                // Play mode: disable editing.
+                _patch = null;
+                _factory = null;
+            }
 
             Repaint();
         }
@@ -356,13 +368,7 @@ namespace Wiring.Editor
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            GUILayout.Label("No patch found", EditorStyles.largeLabel);
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.Button("Create New Patch"); // FIXME: not functioning
+            GUILayout.Label("No patch available", EditorStyles.largeLabel);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
