@@ -285,8 +285,16 @@ namespace Klak.WiringEditor
             // Delete request
             if (record is FeedbackQueue.DeleteNodeRecord)
             {
-                var node = ((FeedbackQueue.DeleteNodeRecord)record).node;
-                node.RemoveFromPatch(_patch);
+                var removeNode = ((FeedbackQueue.DeleteNodeRecord)record).node;
+
+                // Remove related links.
+                foreach (var node in _patch.nodeList)
+                    node.RemoveLinksTo(removeNode, _patch);
+
+                // Remove the node.
+                removeNode.RemoveFromPatch(_patch);
+
+                // Reset the editor state.
                 ResetState();
             }
 

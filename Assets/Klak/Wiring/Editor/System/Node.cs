@@ -84,7 +84,6 @@ namespace Klak.WiringEditor
         // Remove itself from the patch.
         public void RemoveFromPatch(Patch patch)
         {
-            //GameObject.DestroyImmediate(_instance.gameObject);
             Undo.DestroyObjectImmediate(_instance.gameObject);
         }
 
@@ -133,6 +132,7 @@ namespace Klak.WiringEditor
             }
         }
 
+        // Remove a link to a given node/inlet.
         public void RemoveLink(Outlet outlet, Node targetNode, Inlet inlet)
         {
             Undo.RecordObject(_instance, "Remove Link");
@@ -149,6 +149,16 @@ namespace Klak.WiringEditor
             // Clear the cache and update information.
             _cachedLinks = null;
             _serializedObject.Update();
+        }
+
+        // Remove all links to a given node.
+        public void RemoveLinksTo(Node targetNode, Patch patch)
+        {
+            if (_cachedLinks == null) CacheLinks(patch);
+
+            foreach (var link in _cachedLinks)
+                if (link.toNode == targetNode)
+                    RemoveLink(link.fromOutlet, link.toNode, link.toInlet);
         }
 
         // Draw (sub)window GUI.
