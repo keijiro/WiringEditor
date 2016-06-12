@@ -38,6 +38,12 @@ namespace Klak.Wiring
         }
 
         [Inlet]
+        public Vector3 gravity {
+            get { return Physics.gravity; }
+            set { Physics.gravity = value; }
+        }
+
+        [Inlet]
         public float ambientIntensity {
             get { return RenderSettings.ambientIntensity; }
             set { RenderSettings.ambientIntensity = value; }
@@ -53,6 +59,12 @@ namespace Klak.Wiring
         public bool fog {
             get { return RenderSettings.fog; }
             set { RenderSettings.fog = value; }
+        }
+
+        [Inlet]
+        public Color fogColor {
+            get { return RenderSettings.fogColor; }
+            set { RenderSettings.fogColor = value; }
         }
 
         [Inlet]

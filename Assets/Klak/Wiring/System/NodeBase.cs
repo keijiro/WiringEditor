@@ -63,6 +63,12 @@ namespace Klak.Wiring
         [System.Serializable]
         public class FloatEvent : UnityEvent<float> {}
 
+        [System.Serializable]
+        public class Vector3Event : UnityEvent<Vector3> {}
+
+        [System.Serializable]
+        public class ColorEvent : UnityEvent<Color> {}
+
         static public Vector2 uninitializedNodePosition {
             get { return new Vector2(-1000, -1000); }
         }

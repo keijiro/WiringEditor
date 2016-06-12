@@ -27,15 +27,12 @@ using System;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Color Map")]
+    [AddComponentMenu("Klak/Wiring/Color Controller")]
     public class ColorController : NodeBase
     {
         #region Nested Public Classes
 
         public enum ColorMode { Gradient, ColorArray }
-
-        [Serializable]
-        public class ColorEvent : UnityEvent<Color> {}
 
         #endregion
 
@@ -51,7 +48,7 @@ namespace Klak.Wiring
         [ColorUsage(true, true, 0, 16, 0.125f, 3)]
         Color[] _colorArray = new Color[2] { Color.black, Color.white };
 
-        [SerializeField]
+        [SerializeField, Outlet]
         ColorEvent _colorEvent = new ColorEvent();
 
         #endregion

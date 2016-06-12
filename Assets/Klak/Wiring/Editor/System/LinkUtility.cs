@@ -125,6 +125,34 @@ namespace Klak.WiringEditor
                     return true;
                 }
             }
+            else if (triggerEvent is UnityEvent<Vector3>)
+            {
+                // The trigger event has a Vector3 parameter.
+                // Then the target method should have a Vector3 parameter too.
+                if (actionType == typeof(UnityAction<Vector3>))
+                {
+                    // Add the action to the event.
+                    UnityEventTools.AddPersistentListener(
+                       (UnityEvent<Vector3>)triggerEvent,
+                       (UnityAction<Vector3>)targetAction
+                    );
+                    return true;
+                }
+            }
+            else if (triggerEvent is UnityEvent<Color>)
+            {
+                // The trigger event has a color parameter.
+                // Then the target method should have a color parameter too.
+                if (actionType == typeof(UnityAction<Color>))
+                {
+                    // Add the action to the event.
+                    UnityEventTools.AddPersistentListener(
+                       (UnityEvent<Color>)triggerEvent,
+                       (UnityAction<Color>)targetAction
+                    );
+                    return true;
+                }
+            }
 
             return false; // trigger-target mismatch
         }
@@ -165,9 +193,11 @@ namespace Klak.WiringEditor
             var paramType = args[0].ParameterType;
 
             // Returns one of the corrensponding action types.
-            if (paramType == typeof(bool )) return typeof(UnityAction<bool >);
-            if (paramType == typeof(int  )) return typeof(UnityAction<int  >);
-            if (paramType == typeof(float)) return typeof(UnityAction<float>);
+            if (paramType == typeof(bool   )) return typeof(UnityAction<bool   >);
+            if (paramType == typeof(int    )) return typeof(UnityAction<int    >);
+            if (paramType == typeof(float  )) return typeof(UnityAction<float  >);
+            if (paramType == typeof(Vector3)) return typeof(UnityAction<Vector3>);
+            if (paramType == typeof(Color  )) return typeof(UnityAction<Color  >);
 
             // No one matches the method type.
             return null;
