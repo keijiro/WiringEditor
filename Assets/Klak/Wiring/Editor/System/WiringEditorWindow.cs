@@ -32,6 +32,16 @@ namespace Klak.WiringEditor
     // Editor window class
     public class WiringEditorWindow : EditorWindow
     {
+        #region Public methods
+
+        public void SelectPatch(Wiring.Patch patchInstance)
+        {
+            _patch = new Patch(patchInstance);
+            _factory = new NodeFactory(_patch);
+        }
+
+        #endregion
+
         #region Wiring state class
 
         class WiringState
