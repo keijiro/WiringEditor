@@ -27,42 +27,33 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(KeyInput))]
-    public class KeyInputEditor : Editor
+    [CustomEditor(typeof(Threshold))]
+    public class ThresholdEditor : Editor
     {
-        SerializedProperty _keyCode;
-        SerializedProperty _offValue;
-        SerializedProperty _onValue;
-        SerializedProperty _interpolator;
-        SerializedProperty _keyDownEvent;
-        SerializedProperty _keyUpEvent;
-        SerializedProperty _valueEvent;
+        SerializedProperty _threshold;
+        SerializedProperty _delayToOff;
+        SerializedProperty _onEvent;
+        SerializedProperty _offEvent;
 
         void OnEnable()
         {
-            _keyCode = serializedObject.FindProperty("_keyCode");
-            _offValue = serializedObject.FindProperty("_offValue");
-            _onValue = serializedObject.FindProperty("_onValue");
-            _interpolator = serializedObject.FindProperty("_interpolator");
-            _keyDownEvent = serializedObject.FindProperty("_keyDownEvent");
-            _keyUpEvent = serializedObject.FindProperty("_keyUpEvent");
-            _valueEvent = serializedObject.FindProperty("_valueEvent");
+            _threshold = serializedObject.FindProperty("_threshold");
+            _delayToOff = serializedObject.FindProperty("_delayToOff");
+            _onEvent = serializedObject.FindProperty("_onEvent");
+            _offEvent = serializedObject.FindProperty("_offEvent");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_keyCode);
-            EditorGUILayout.PropertyField(_offValue);
-            EditorGUILayout.PropertyField(_onValue);
-            EditorGUILayout.PropertyField(_interpolator);
+            EditorGUILayout.PropertyField(_threshold);
+            EditorGUILayout.PropertyField(_delayToOff);
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_keyDownEvent);
-            EditorGUILayout.PropertyField(_keyUpEvent);
-            EditorGUILayout.PropertyField(_valueEvent);
+            EditorGUILayout.PropertyField(_onEvent);
+            EditorGUILayout.PropertyField(_offEvent);
 
             serializedObject.ApplyModifiedProperties();
         }
