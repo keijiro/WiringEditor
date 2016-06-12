@@ -25,6 +25,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 namespace Klak.WiringEditor
 {
@@ -64,6 +65,9 @@ namespace Klak.WiringEditor
 
         // Wiring state (null = not wiring now)
         WiringState _wiring;
+
+        // Node property editor
+        Editor _propertyEditor;
 
         // View size and positions
         Vector2 _mainViewSize;
@@ -130,7 +134,7 @@ namespace Klak.WiringEditor
             // - Main view
             DrawMainViewGUI();
 
-            // - Property editor
+            // - Side view (property editor)
             DrawSideBarGUI();
 
             EditorGUILayout.EndHorizontal();
@@ -187,14 +191,13 @@ namespace Klak.WiringEditor
 
         #region Private methods
 
-        // Returns the node currently chosen.
-        Node activeNode {
-            get {
-                if (_patch != null)
-                    foreach (var node in _patch.nodeList)
-                        if (node.isActive) return node;
+        // Find and get the active node.
+        Node GetActiveNode()
+        {
+            if (_patch != null && _patch.isValid)
+                return _patch.nodeList.FirstOrDefault(n => n.isActive);
+            else
                 return null;
-            }
         }
 
         // Reset the internal state.
@@ -379,12 +382,22 @@ namespace Klak.WiringEditor
             EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
             _scrollSide = EditorGUILayout.BeginScrollView(_scrollSide);
 
-            // Show the inspector of the active node.
-            var active = activeNode;
-            if (active != null) {
-                EditorGUILayout.TextField("Node Name", active.displayName);
-                EditorGUILayout.Space();
-                active.DrawInspectorGUI();
+            // Determine the active node.
+            var activeNode = GetActiveNode();
+
+            // Destroy the previous property editor if it's not needed.
+            if (_propertyEditor != null) {
+                var nodeInstance = (Wiring.NodeBase)_propertyEditor.target;
+                if (activeNode == null || !activeNode.IsRepresentationOf(nodeInstance)) {
+                    DestroyImmediate(_propertyEditor);
+                    _propertyEditor = null;
+                }
+            }
+
+            // Show the property editor.
+            if (activeNode != null) {
+                _propertyEditor = activeNode.CreateEditor();
+                _propertyEditor.OnInspectorGUI();
             }
 
             EditorGUILayout.EndScrollView();

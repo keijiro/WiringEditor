@@ -81,6 +81,12 @@ namespace Klak.WiringEditor
             ValidatePosition();
         }
 
+        // Check if this is a representation of a given instance.
+        public bool IsRepresentationOf(Wiring.NodeBase instance)
+        {
+            return _instance == instance;
+        }
+
         // Remove itself from the patch.
         public void RemoveFromPatch(Patch patch)
         {
@@ -179,11 +185,10 @@ namespace Klak.WiringEditor
             }
         }
 
-        // Draw property inspector GUI.
-        public void DrawInspectorGUI()
+        // Create a property editor.
+        public Editor CreateEditor()
         {
-            if (_editor == null) _editor = UnityEditor.Editor.CreateEditor(_instance);
-            _editor.OnInspectorGUI();
+            return UnityEditor.Editor.CreateEditor(_instance);
         }
 
         // Draw lines of the links from this node.
@@ -223,7 +228,6 @@ namespace Klak.WiringEditor
         // GUI
         int _windowID;
         int _controlID;
-        UnityEditor.Editor _editor; // FIXME: should be handled in WiringEditorWindow
 
         // Window ID of currently selected window
         static int _activeWindowID;
