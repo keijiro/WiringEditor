@@ -308,6 +308,7 @@ namespace Klak.WiringEditor
                 var x = (_windowID % 8 + 1) * 50;
                 var y = (_windowID % 32 + 1) * 20;
                 _serializedPosition.vector2Value = new Vector2(x, y);
+                _serializedObject.ApplyModifiedProperties();
             }
         }
 

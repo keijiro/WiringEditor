@@ -27,5 +27,7 @@ namespace Klak.Wiring
 {
     public class Patch : MonoBehaviour
     {
+        [SerializeField, HideInInspector]
+        public bool _wiringSelected;
     }
 }

@@ -34,29 +34,60 @@ namespace Klak.WiringEditor
         #region Public methods
 
         // Constructor
-        public NodeFactory(Patch patch)
+        public NodeFactory()
         {
-            _patch = patch;
             EnumerateNodeTypes();
         }
 
-        // "Create New Node" menu GUI function
-        public void CreateNodeMenuGUI()
+        // Create and open the "Create New Node" dropdown menu.
+        public void CreateNodeMenuGUI(Patch patch)
         {
             if (GUILayout.Button(_buttonText, EditorStyles.toolbarDropDown))
             {
                 var menu = new GenericMenu();
 
-                foreach (var nodeType in _nodeTypes) {
+                foreach (var nodeType in _nodeTypes)
                     menu.AddItem(
                         new GUIContent(nodeType.label), false,
-                        OnCreateNodeMenuItem, nodeType
+                        OnMenuItem, new MenuItemData(patch, nodeType.type)
                     );
-                }
 
                 var oy = EditorStyles.toolbar.fixedHeight - 2;
                 menu.DropDown(new Rect(1, oy, 1, 1));
             }
+        }
+
+        #endregion
+
+        #region Menu item callback
+
+        // Menu item data
+        class MenuItemData
+        {
+            public Patch patch;
+            public System.Type type;
+
+            public MenuItemData(Patch patch, System.Type type)
+            {
+                this.patch = patch;
+                this.type = type;
+            }
+        }
+
+        // Menu item callback function
+        void OnMenuItem(object userData)
+        {
+            var data = (MenuItemData)userData;
+
+            // Create a game object.
+            var gameObject = new GameObject(data.type.Name);
+            var instance = gameObject.AddComponent(data.type);
+
+            // Add it to the patch.
+            data.patch.AddNodeInstance((Wiring.NodeBase)instance);
+
+            // Make it undo-able.
+            Undo.RegisterCreatedObjectUndo(gameObject, "New Node");
         }
 
         #endregion
@@ -110,24 +141,6 @@ namespace Klak.WiringEditor
         #region Other private members
 
         static GUIContent _buttonText = new GUIContent("Create New Node");
-
-        Patch _patch;
-
-        // Menu item execution
-        void OnCreateNodeMenuItem(object data)
-        {
-            var nodeType = (NodeType)data;
-
-            // Create a game object.
-            var go = new GameObject(nodeType.type.Name);
-            var instance = go.AddComponent(nodeType.type);
-
-            // Add it to the patch.
-            _patch.AddNodeInstance((Wiring.NodeBase)instance);
-
-            // Make it undo-able.
-            Undo.RegisterCreatedObjectUndo(go, "New Node");
-        }
 
         #endregion
     }

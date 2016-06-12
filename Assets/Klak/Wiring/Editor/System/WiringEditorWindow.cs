@@ -37,7 +37,7 @@ namespace Klak.WiringEditor
         public void SelectPatch(Wiring.Patch patchInstance)
         {
             _patch = new Patch(patchInstance);
-            _factory = new NodeFactory(_patch);
+            _patchManager.Select(_patch);
         }
 
         #endregion
@@ -71,7 +71,8 @@ namespace Klak.WiringEditor
         Patch _patch;
 
         // Helper objects
-        NodeFactory _factory;
+        PatchManager _patchManager;
+        NodeFactory _nodeFactory;
 
         // Wiring state (null = not wiring now)
         WiringState _wiring;
@@ -96,7 +97,11 @@ namespace Klak.WiringEditor
 
         void OnEnable()
         {
+            _patchManager = new PatchManager();
+            _nodeFactory = new NodeFactory();
+
             ResetState();
+
             Undo.undoRedoPerformed += ResetState;
             EditorApplication.playmodeStateChanged += ResetState;
         }
@@ -108,8 +113,8 @@ namespace Klak.WiringEditor
                 _propertyEditor = null;
             }
 
-            _patch = null;
-            _factory = null;
+            _patchManager = null;
+            _nodeFactory = null;
 
             Undo.undoRedoPerformed -= ResetState;
             EditorApplication.playmodeStateChanged -= ResetState;
@@ -122,7 +127,8 @@ namespace Klak.WiringEditor
 
         void OnGUI()
         {
-            if (_patch == null) {
+            // Disable GUI during the play mode, or when no patch is available.
+            if (isPlayMode || _patch == null) {
                 DrawNoPatchMessage();
                 return;
             }
@@ -131,13 +137,14 @@ namespace Klak.WiringEditor
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
             // - Create node menu
-            _factory.CreateNodeMenuGUI();
+            _nodeFactory.CreateNodeMenuGUI(_patch);
             GUILayout.Space(100);
 
             // - Patch selector
-            var patchIndex = Organizer.GetPatchIndex(_patch);
+            var patchIndex = _patchManager.GetIndexOf(_patch);
             var newPatchIndex = EditorGUILayout.Popup(
-                patchIndex, Organizer.GetPatchNameList(), EditorStyles.toolbarDropDown
+                patchIndex, _patchManager.MakeNameList(),
+                EditorStyles.toolbarDropDown
             );
 
             GUILayout.FlexibleSpace();
@@ -156,9 +163,10 @@ namespace Klak.WiringEditor
             EditorGUILayout.EndHorizontal();
 
             // Re-initialize the editor if the patch selection was changed.
-            if (patchIndex != newPatchIndex) {
-                _patch = Organizer.RetrievePatch(newPatchIndex);
-                _factory = new NodeFactory(_patch);
+            if (patchIndex != newPatchIndex)
+            {
+                _patch = _patchManager.RetrieveAt(newPatchIndex);
+                _patchManager.Select(_patch);
                 Repaint();
             }
         }
@@ -207,6 +215,14 @@ namespace Klak.WiringEditor
 
         #region Private methods
 
+        // Check if in the play mode.
+        bool isPlayMode {
+            get {
+                return EditorApplication.isPlaying ||
+                    EditorApplication.isPlayingOrWillChangePlaymode;
+            }
+        }
+
         // Find and get the active node.
         Node GetActiveNode()
         {
@@ -219,41 +235,16 @@ namespace Klak.WiringEditor
         // Reset the internal state.
         void ResetState()
         {
-            if (!EditorApplication.isPlaying &&
-                !EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                Organizer.Reset();
+            _patchManager.Reset();
 
-                if (_patch == null || !_patch.isValid)
-                    RetrieveDefaultPatch();
-                else
-                    _patch.Rescan();
-
-                _mainViewSize = Vector2.one * 300; // minimum view size
-            }
+            if (_patch == null || !_patch.isValid)
+                _patch = _patchManager.RetrieveLastSelected();
             else
-            {
-                // Play mode: disable editing.
-                _patch = null;
-                _factory = null;
-            }
+                _patch.Rescan();
+
+            _mainViewSize = Vector2.one * 300; // minimum view size
 
             Repaint();
-        }
-
-        // Retrieve the default patch (first available one).
-        void RetrieveDefaultPatch()
-        {
-            if (Organizer.patchCount > 0)
-            {
-                _patch = Organizer.RetrievePatch(0);
-                _factory = new NodeFactory(_patch);
-            }
-            else
-            {
-                _patch = null;
-                _factory = null;
-            }
         }
 
         // Show the inlet/outlet context menu .
