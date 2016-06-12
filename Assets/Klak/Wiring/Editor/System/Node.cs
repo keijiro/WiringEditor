@@ -306,7 +306,7 @@ namespace Klak.WiringEditor
             {
                 // Calculate the initial window position with the window ID.
                 var x = (_windowID % 8 + 1) * 50;
-                var y = (_windowID % 32 + 1) * 20;
+                var y = (_windowID % 16 + 1) * 20;
                 _serializedPosition.vector2Value = new Vector2(x, y);
                 _serializedObject.ApplyModifiedProperties();
             }
