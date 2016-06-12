@@ -406,10 +406,19 @@ namespace Klak.WiringEditor
                 }
             }
 
-            // Show the property editor.
-            if (activeNode != null) {
+            if (activeNode != null)
+            {
+                // Name field
+                EditorGUILayout.LabelField("Node Attributes", EditorStyles.boldLabel);
+                activeNode.DrawNameFieldGUI();
+                EditorGUILayout.Space();
+
+                // Show the property editor.
+                EditorGUILayout.LabelField(activeNode.typeName + " Properties", EditorStyles.boldLabel);
+
                 if (_propertyEditor == null)
                     _propertyEditor = activeNode.CreateEditor();
+
                 _propertyEditor.OnInspectorGUI();
             }
 

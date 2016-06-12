@@ -45,6 +45,11 @@ namespace Klak.WiringEditor
             }
         }
 
+        // Type name of the node instance
+        public string typeName {
+            get { return _instance.GetType().Name; }
+        }
+
         // Is this window selected in the editor?
         public bool isActive {
             get { return _activeWindowID == _windowID; }
@@ -182,6 +187,17 @@ namespace Klak.WiringEditor
                 _serializedObject.Update();
                 _serializedPosition.vector2Value = newRect.position;
                 _serializedObject.ApplyModifiedProperties();
+            }
+        }
+
+        // Draw the name field GUI.
+        public void DrawNameFieldGUI()
+        {
+            var newName = EditorGUILayout.TextField("Node Name", _instance.name);
+            if (newName != _instance.name)
+            {
+                Undo.RecordObject(_instance.gameObject, "Changed Name");
+                _instance.name = newName;
             }
         }
 
