@@ -93,8 +93,14 @@ namespace Klak.WiringEditor
 
         void OnDisable()
         {
+            if (_propertyEditor != null) {
+                DestroyImmediate(_propertyEditor);
+                _propertyEditor = null;
+            }
+
             _patch = null;
             _factory = null;
+
             Undo.undoRedoPerformed -= ResetState;
             EditorApplication.playmodeStateChanged -= ResetState;
         }
@@ -386,17 +392,24 @@ namespace Klak.WiringEditor
             var activeNode = GetActiveNode();
 
             // Destroy the previous property editor if it's not needed.
-            if (_propertyEditor != null) {
-                var nodeInstance = (Wiring.NodeBase)_propertyEditor.target;
-                if (activeNode == null || !activeNode.IsRepresentationOf(nodeInstance)) {
+            if (_propertyEditor != null)
+            {
+                var targetNodeInstance = (Wiring.NodeBase)_propertyEditor.target;
+                if (activeNode == null ||
+                    !activeNode.IsRepresentationOf(targetNodeInstance))
+                {
                     DestroyImmediate(_propertyEditor);
                     _propertyEditor = null;
+
+                    // This is needed to clear the UnityEventDrawer cache.
+                    EditorUtility.ClearPropertyDrawerCache();
                 }
             }
 
             // Show the property editor.
             if (activeNode != null) {
-                _propertyEditor = activeNode.CreateEditor();
+                if (_propertyEditor == null)
+                    _propertyEditor = activeNode.CreateEditor();
                 _propertyEditor.OnInspectorGUI();
             }
 
