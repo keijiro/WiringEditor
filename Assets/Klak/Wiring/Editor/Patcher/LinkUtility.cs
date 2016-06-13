@@ -27,7 +27,7 @@ using UnityEditor;
 using UnityEditor.Events;
 using System.Reflection;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     public static class LinkUtility
     {

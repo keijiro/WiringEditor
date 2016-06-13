@@ -26,7 +26,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Editor representation of patch
     // It also manages mapping information between

@@ -42,7 +42,7 @@ namespace Klak.Wiring
         {
             if (!EditorApplication.isPlaying)
                 if (GUILayout.Button("Open Patcher", "LargeButton"))
-                    WiringEditor.PatcherWindow.OpenPatch((Patch)target);
+                    Patcher.PatcherWindow.OpenPatch((Patch)target);
         }
     }
 }

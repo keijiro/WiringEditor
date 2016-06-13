@@ -24,7 +24,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Link between a pair of nodes
     // Mainly used for caching link infromation.

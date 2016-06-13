@@ -24,7 +24,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Editor representation of node inlet
     public class Inlet

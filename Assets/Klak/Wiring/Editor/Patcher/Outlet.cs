@@ -25,7 +25,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEditor;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Editor representation of node outlet
     public class Outlet

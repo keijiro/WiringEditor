@@ -24,7 +24,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // GUI styles used in the editor window
     public static class GUIStyles

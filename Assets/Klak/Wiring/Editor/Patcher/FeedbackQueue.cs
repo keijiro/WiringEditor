@@ -25,7 +25,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Queue class used to feedback user actions from UI controls
     public static class FeedbackQueue

@@ -28,7 +28,7 @@ using UnityEditor.Events;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Editor representation of node
     public class Node

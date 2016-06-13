@@ -26,7 +26,7 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Class for creating new nodes
     public class NodeFactory

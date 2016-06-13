@@ -26,7 +26,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     public static class EditorUtility
     {

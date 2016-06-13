@@ -25,7 +25,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Class for managing the list of patches.
     public class PatchManager

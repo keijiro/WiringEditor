@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 
-namespace Klak.WiringEditor
+namespace Klak.Wiring.Patcher
 {
     // Patcher window class
     public class PatcherWindow : EditorWindow
