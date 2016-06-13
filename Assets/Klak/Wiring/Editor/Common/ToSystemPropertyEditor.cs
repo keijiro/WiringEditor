@@ -27,16 +27,11 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(SystemProperty))]
-    public class SystemPropertyEditor : Editor
+    [CustomEditor(typeof(ToSystemProperty))]
+    public class ToSystemPropertyEditor : Editor
     {
         public override void OnInspectorGUI()
         {
-            EditorGUILayout.HelpBox(
-                "Currently supported properties are:\n" +
-                "Time - timeScale\n" +
-                "Renderer - ambientIntensity, reflectionIntensity, fog, fogDensity, fogStartDistance, fogEndDistance",
-                MessageType.None);
         }
     }
 }

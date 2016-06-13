@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(Transformer))]
-    public class TransformerEditor : Editor
+    [CustomEditor(typeof(ToTransform))]
+    public class ToTransformEditor : Editor
     {
         SerializedProperty _translationMode;
         SerializedProperty _translationVector;
@@ -90,12 +90,12 @@ namespace Klak.Wiring
             EditorGUI.indentLevel++;
 
             var showAll = _translationMode.hasMultipleDifferentValues;
-            var t_mode = (Transformer.TranslationMode)_translationMode.enumValueIndex;
+            var t_mode = (ToTransform.TranslationMode)_translationMode.enumValueIndex;
 
-            if (showAll || t_mode == Transformer.TranslationMode.Vector)
+            if (showAll || t_mode == ToTransform.TranslationMode.Vector)
                 EditorGUILayout.PropertyField(_translationVector, GUIContent.none);
 
-            if (showAll || t_mode != Transformer.TranslationMode.Off)
+            if (showAll || t_mode != ToTransform.TranslationMode.Off)
             {
                 EditorGUILayout.PropertyField(_translationAmount0, _textAmount0);
                 EditorGUILayout.PropertyField(_translationAmount1, _textAmount1);
@@ -110,12 +110,12 @@ namespace Klak.Wiring
             EditorGUI.indentLevel++;
 
             showAll = _rotationMode.hasMultipleDifferentValues;
-            var r_mode = (Transformer.RotationMode)_rotationMode.enumValueIndex;
+            var r_mode = (ToTransform.RotationMode)_rotationMode.enumValueIndex;
 
-            if (showAll || r_mode == Transformer.RotationMode.Vector)
+            if (showAll || r_mode == ToTransform.RotationMode.Vector)
                 EditorGUILayout.PropertyField(_rotationAxis, GUIContent.none);
 
-            if (showAll || r_mode != Transformer.RotationMode.Off)
+            if (showAll || r_mode != ToTransform.RotationMode.Off)
             {
                 EditorGUILayout.PropertyField(_rotationAngle0, _textAngle0);
                 EditorGUILayout.PropertyField(_rotationAngle1, _textAngle1);
@@ -130,12 +130,12 @@ namespace Klak.Wiring
             EditorGUI.indentLevel++;
 
             showAll = _rotationMode.hasMultipleDifferentValues;
-            var s_mode = (Transformer.ScaleMode)_scaleMode.enumValueIndex;
+            var s_mode = (ToTransform.ScaleMode)_scaleMode.enumValueIndex;
 
-            if (showAll || s_mode == Transformer.ScaleMode.Vector)
+            if (showAll || s_mode == ToTransform.ScaleMode.Vector)
                 EditorGUILayout.PropertyField(_scaleVector, GUIContent.none);
 
-            if (showAll || s_mode != Transformer.ScaleMode.Off)
+            if (showAll || s_mode != ToTransform.ScaleMode.Off)
             {
                 EditorGUILayout.PropertyField(_scaleAmount0, _textAmount0);
                 EditorGUILayout.PropertyField(_scaleAmount1, _textAmount1);

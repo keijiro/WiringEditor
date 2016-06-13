@@ -26,8 +26,8 @@ using UnityEngine.Events;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/System Property")]
-    public class SystemProperty : NodeBase
+    [AddComponentMenu("Klak/Wiring/To System Property")]
+    public class ToSystemProperty : NodeBase
     {
         #region Public Properties
 
