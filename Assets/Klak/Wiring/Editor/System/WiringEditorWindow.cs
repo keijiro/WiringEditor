@@ -198,13 +198,13 @@ namespace Klak.WiringEditor
             {
                 // Draw a curve from the inlet button.
                 p1 += (Vector3)_wiring.inlet.buttonRect.center;
-                DrawUtility.Curve(p2, p1);
+                EditorUtility.DrawCurve(p2, p1);
             }
             else
             {
                 // Draw a curve from the outlet button.
                 p1 += (Vector3)_wiring.outlet.buttonRect.center;
-                DrawUtility.Curve(p1, p2);
+                EditorUtility.DrawCurve(p1, p2);
             }
 
             // Request repaint continuously.

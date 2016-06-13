@@ -59,7 +59,7 @@ namespace Klak.WiringEditor
             p1 += (Vector3)_fromOutlet.buttonRect.center;
             p2 += (Vector3)_toInlet.buttonRect.center;
 
-            DrawUtility.Curve(p1, p2);
+            EditorUtility.DrawCurve(p1, p2);
         }
 
         #endregion
