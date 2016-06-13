@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Float To Vector")]
     public class FloatToVector : NodeBase
     {
-        #region Public Properties
+        #region Public properties
 
         public Vector3 vector0 {
             get { return _vector0; }

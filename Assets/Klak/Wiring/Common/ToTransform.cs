@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/To Transform")]
     public class ToTransform : NodeBase
     {
-        #region Public Properties
+        #region Public properties
 
         public Transform targetTransform {
             get { return _targetTransform; }

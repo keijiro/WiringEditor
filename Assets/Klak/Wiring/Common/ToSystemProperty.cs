@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/To System Property")]
     public class ToSystemProperty : NodeBase
     {
-        #region Public Properties
+        #region Public properties
 
         [Inlet]
         public float timeScale {

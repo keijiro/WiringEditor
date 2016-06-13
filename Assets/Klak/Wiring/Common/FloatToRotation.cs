@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Float To Rotation")]
     public class FloatToRotation : NodeBase
     {
-        #region Public Properties
+        #region Public properties
 
         public Vector3 rotationAxis {
             get { return _rotationAxis; }

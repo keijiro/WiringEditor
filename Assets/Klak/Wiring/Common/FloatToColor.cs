@@ -28,7 +28,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Float To Color")]
     public class FloatToColor : NodeBase
     {
-        #region Public Properties
+        #region Public properties
 
         public enum ColorMode { Gradient, ColorArray }
 
