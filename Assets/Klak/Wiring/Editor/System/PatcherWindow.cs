@@ -29,15 +29,27 @@ using System.Linq;
 
 namespace Klak.WiringEditor
 {
-    // Editor window class
-    public class WiringEditorWindow : EditorWindow
+    // Patcher window class
+    public class PatcherWindow : EditorWindow
     {
-        #region Public methods
+        #region Exposed functions
 
-        public void SelectPatch(Wiring.Patch patchInstance)
+        // Open the patcher window with a given patch.
+        public static void OpenPatch(Wiring.Patch patchInstance)
         {
-            _patch = new Patch(patchInstance);
-            _patchManager.Select(_patch);
+            var window = EditorWindow.GetWindow<PatcherWindow>("Patcher");
+
+            window._patch = new Patch(patchInstance);
+            window._patchManager.Select(window._patch);
+
+            window.Show();
+        }
+
+        // Open from the main menu.
+        [MenuItem("Window/Klak/Patcher")]
+        static void Init()
+        {
+            EditorWindow.GetWindow<PatcherWindow>("Patcher").Show();
         }
 
         #endregion
@@ -87,13 +99,7 @@ namespace Klak.WiringEditor
 
         #endregion
 
-        #region Window functions
-
-        [MenuItem("Window/Wiring")]
-        static void Init()
-        {
-            EditorWindow.GetWindow<WiringEditorWindow>("Wiring").Show();
-        }
+        #region EditorWindow functions
 
         void OnEnable()
         {

@@ -30,7 +30,7 @@ namespace Klak.Wiring
     [CustomEditor(typeof(Patch))]
     public class PatchEditor : Editor
     {
-        [MenuItem("GameObject/Create Other/Klak/Wiring Patch")]
+        [MenuItem("GameObject/Create Other/Klak/Patch")]
         static void CreatePatch()
         {
             var go = new GameObject("Patch");
@@ -40,12 +40,9 @@ namespace Klak.Wiring
 
         public override void OnInspectorGUI()
         {
-            if (GUILayout.Button("Open Wiring Editor", "LargeButton"))
-            {
-                var window = EditorWindow.GetWindow<WiringEditor.WiringEditorWindow>("Wiring");
-                window.SelectPatch((Patch)target);
-                window.Show();
-            }
+            if (!EditorApplication.isPlaying)
+                if (GUILayout.Button("Open Patcher", "LargeButton"))
+                    WiringEditor.PatcherWindow.OpenPatch((Patch)target);
         }
     }
 }
