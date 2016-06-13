@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Float To Vector")]
+    [AddComponentMenu("Klak/Wiring/Convert/Float To Vector")]
     public class FloatToVector : NodeBase
     {
         #region Public properties

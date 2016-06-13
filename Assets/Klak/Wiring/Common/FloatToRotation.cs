@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Float To Rotation")]
+    [AddComponentMenu("Klak/Wiring/Convert/Float To Rotation")]
     public class FloatToRotation : NodeBase
     {
         #region Public properties

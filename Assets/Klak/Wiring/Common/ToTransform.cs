@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/To Transform")]
+    [AddComponentMenu("Klak/Wiring/Output/To Transform")]
     public class ToTransform : NodeBase
     {
         #region Public properties

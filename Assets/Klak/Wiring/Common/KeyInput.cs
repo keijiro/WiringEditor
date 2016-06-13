@@ -28,7 +28,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Key Input")]
+    [AddComponentMenu("Klak/Wiring/Input/Key Input")]
     public class KeyInput : NodeBase
     {
         #region Editable Properties

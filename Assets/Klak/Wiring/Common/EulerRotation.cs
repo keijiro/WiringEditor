@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Euler Rotation")]
+    [AddComponentMenu("Klak/Wiring/Convert/Euler Rotation")]
     public class EulerRotation : NodeBase
     {
         #region Node I/O

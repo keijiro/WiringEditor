@@ -28,7 +28,7 @@ using System;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Value Mixer")]
+    [AddComponentMenu("Klak/Wiring/Filter/Value Mixer")]
     public class ValueMixer : NodeBase
     {
         #region Nested Public Classes

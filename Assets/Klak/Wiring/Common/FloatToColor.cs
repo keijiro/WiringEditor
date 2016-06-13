@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Float To Color")]
+    [AddComponentMenu("Klak/Wiring/Convert/Float To Color")]
     public class FloatToColor : NodeBase
     {
         #region Public properties

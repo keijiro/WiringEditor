@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Float Filter")]
+    [AddComponentMenu("Klak/Wiring/Filter/Float Filter")]
     public class FloatFilter : NodeBase
     {
         #region Public properties
