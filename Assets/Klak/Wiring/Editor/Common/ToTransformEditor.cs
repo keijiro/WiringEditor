@@ -30,49 +30,11 @@ namespace Klak.Wiring
     [CustomEditor(typeof(ToTransform))]
     public class ToTransformEditor : Editor
     {
-        SerializedProperty _translationMode;
-        SerializedProperty _translationVector;
-        SerializedProperty _translationAmount0;
-        SerializedProperty _translationAmount1;
-
-        SerializedProperty _rotationMode;
-        SerializedProperty _rotationAxis;
-        SerializedProperty _rotationAngle0;
-        SerializedProperty _rotationAngle1;
-
-        SerializedProperty _scaleMode;
-        SerializedProperty _scaleVector;
-        SerializedProperty _scaleAmount0;
-        SerializedProperty _scaleAmount1;
-
         SerializedProperty _targetTransform;
         SerializedProperty _addToOriginal;
 
-        static GUIContent _textAmount0 = new GUIContent("Amount at 0");
-        static GUIContent _textAmount1 = new GUIContent("Amount at 1");
-        static GUIContent _textAngle0 = new GUIContent("Angle at 0");
-        static GUIContent _textAngle1 = new GUIContent("Angle at 1");
-        static GUIContent _textRotation = new GUIContent("Rotation");
-        static GUIContent _textScale = new GUIContent("Scale");
-        static GUIContent _textTranslation = new GUIContent("Translation");
-
         void OnEnable()
         {
-            _translationMode = serializedObject.FindProperty("_translationMode");
-            _translationVector = serializedObject.FindProperty("_translationVector");
-            _translationAmount0 = serializedObject.FindProperty("_translationAmount0");
-            _translationAmount1 = serializedObject.FindProperty("_translationAmount1");
-
-            _rotationMode = serializedObject.FindProperty("_rotationMode");
-            _rotationAxis = serializedObject.FindProperty("_rotationAxis");
-            _rotationAngle0 = serializedObject.FindProperty("_rotationAngle0");
-            _rotationAngle1 = serializedObject.FindProperty("_rotationAngle1");
-
-            _scaleMode = serializedObject.FindProperty("_scaleMode");
-            _scaleVector = serializedObject.FindProperty("_scaleVector");
-            _scaleAmount0 = serializedObject.FindProperty("_scaleAmount0");
-            _scaleAmount1 = serializedObject.FindProperty("_scaleAmount1");
-
             _targetTransform = serializedObject.FindProperty("_targetTransform");
             _addToOriginal = serializedObject.FindProperty("_addToOriginal");
         }
@@ -82,69 +44,6 @@ namespace Klak.Wiring
             serializedObject.Update();
 
             EditorGUILayout.PropertyField(_targetTransform);
-
-            // translation
-
-            EditorGUILayout.PropertyField(_translationMode, _textTranslation);
-
-            EditorGUI.indentLevel++;
-
-            var showAll = _translationMode.hasMultipleDifferentValues;
-            var t_mode = (ToTransform.TranslationMode)_translationMode.enumValueIndex;
-
-            if (showAll || t_mode == ToTransform.TranslationMode.Vector)
-                EditorGUILayout.PropertyField(_translationVector, GUIContent.none);
-
-            if (showAll || t_mode != ToTransform.TranslationMode.Off)
-            {
-                EditorGUILayout.PropertyField(_translationAmount0, _textAmount0);
-                EditorGUILayout.PropertyField(_translationAmount1, _textAmount1);
-            }
-
-            EditorGUI.indentLevel--;
-
-            // rotation
-
-            EditorGUILayout.PropertyField(_rotationMode, _textRotation);
-
-            EditorGUI.indentLevel++;
-
-            showAll = _rotationMode.hasMultipleDifferentValues;
-            var r_mode = (ToTransform.RotationMode)_rotationMode.enumValueIndex;
-
-            if (showAll || r_mode == ToTransform.RotationMode.Vector)
-                EditorGUILayout.PropertyField(_rotationAxis, GUIContent.none);
-
-            if (showAll || r_mode != ToTransform.RotationMode.Off)
-            {
-                EditorGUILayout.PropertyField(_rotationAngle0, _textAngle0);
-                EditorGUILayout.PropertyField(_rotationAngle1, _textAngle1);
-            }
-
-            EditorGUI.indentLevel--;
-
-            // scale
-
-            EditorGUILayout.PropertyField(_scaleMode, _textScale);
-
-            EditorGUI.indentLevel++;
-
-            showAll = _rotationMode.hasMultipleDifferentValues;
-            var s_mode = (ToTransform.ScaleMode)_scaleMode.enumValueIndex;
-
-            if (showAll || s_mode == ToTransform.ScaleMode.Vector)
-                EditorGUILayout.PropertyField(_scaleVector, GUIContent.none);
-
-            if (showAll || s_mode != ToTransform.ScaleMode.Off)
-            {
-                EditorGUILayout.PropertyField(_scaleAmount0, _textAmount0);
-                EditorGUILayout.PropertyField(_scaleAmount1, _textAmount1);
-            }
-
-            EditorGUI.indentLevel--;
-
-            // etc.
-
             EditorGUILayout.PropertyField(_addToOriginal);
 
             serializedObject.ApplyModifiedProperties();
