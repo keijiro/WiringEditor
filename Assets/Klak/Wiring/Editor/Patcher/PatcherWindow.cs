@@ -175,6 +175,18 @@ namespace Klak.Wiring.Patcher
                 _patchManager.Select(_patch);
                 Repaint();
             }
+
+            // Cancel wiring with a mouse click or hitting the esc key.
+            if (_wiring != null)
+            {
+                var e = Event.current;
+                if (e.type == EventType.MouseUp ||
+                    (e.type == EventType.KeyDown && e.keyCode == KeyCode.Escape))
+                {
+                    _wiring = null;
+                    e.Use();
+                }
+            }
         }
 
         #endregion
