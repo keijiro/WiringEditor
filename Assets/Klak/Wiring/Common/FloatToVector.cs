@@ -36,14 +36,16 @@ namespace Klak.Wiring
             set { _vector0 = value; }
         }
 
-        [SerializeField] Vector3 _vector0 = Vector3.zero;
+        [SerializeField]
+        Vector3 _vector0 = Vector3.zero;
 
         public Vector3 vector1 {
             get { return _vector1; }
             set { _vector1 = value; }
         }
 
-        [SerializeField] Vector3 _vector1 = Vector3.right;
+        [SerializeField]
+        Vector3 _vector1 = Vector3.right;
 
         #endregion
 

@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(ColorController))]
-    public class ColorControllerEditor : Editor
+    [CustomEditor(typeof(FloatToColor))]
+    public class FloatToColorEditor : Editor
     {
         SerializedProperty _colorMode;
         SerializedProperty _gradient;
@@ -50,12 +50,14 @@ namespace Klak.Wiring
             EditorGUILayout.PropertyField(_colorMode);
 
             if (_colorMode.hasMultipleDifferentValues ||
-                _colorMode.enumValueIndex == (int)ColorController.ColorMode.Gradient)
+                _colorMode.enumValueIndex == (int)FloatToColor.ColorMode.Gradient)
                 EditorGUILayout.PropertyField(_gradient);
 
             if (_colorMode.hasMultipleDifferentValues ||
-                _colorMode.enumValueIndex == (int)ColorController.ColorMode.ColorArray)
+                _colorMode.enumValueIndex == (int)FloatToColor.ColorMode.ColorArray)
                 DrawColorArray();
+
+            EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(_colorEvent);
 
@@ -66,8 +68,7 @@ namespace Klak.Wiring
         {
             var len = _colorArray.arraySize;
 
-            // FIXME: should be replaced with DelayedIntField in 5.3
-            len = EditorGUILayout.IntField("Array Size", len);
+            len = EditorGUILayout.DelayedIntField("Array Size", len);
             len = Mathf.Max(len, 2);
 
             // enlarge/shrink the list when the size is changed

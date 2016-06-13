@@ -22,21 +22,15 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEngine.Events;
-using System;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Color Controller")]
-    public class ColorController : NodeBase
+    [AddComponentMenu("Klak/Wiring/Float To Color")]
+    public class FloatToColor : NodeBase
     {
-        #region Nested Public Classes
+        #region Public Properties
 
         public enum ColorMode { Gradient, ColorArray }
-
-        #endregion
-
-        #region Editable Properties
 
         [SerializeField]
         ColorMode _colorMode = ColorMode.Gradient;
@@ -48,12 +42,9 @@ namespace Klak.Wiring
         [ColorUsage(true, true, 0, 16, 0.125f, 3)]
         Color[] _colorArray = new Color[2] { Color.black, Color.white };
 
-        [SerializeField, Outlet]
-        ColorEvent _colorEvent = new ColorEvent();
-
         #endregion
 
-        #region Public Properties
+        #region Node I/O
 
         [Inlet]
         public float inputValue {
@@ -76,6 +67,9 @@ namespace Klak.Wiring
                 }
             }
         }
+
+        [SerializeField, Outlet]
+        ColorEvent _colorEvent = new ColorEvent();
 
         #endregion
     }
