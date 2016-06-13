@@ -45,7 +45,7 @@ namespace Klak.Wiring
         }
 
         [SerializeField]
-        Vector3 _vector1 = Vector3.right;
+        Vector3 _vector1 = Vector3.up;
 
         #endregion
 
@@ -54,10 +54,8 @@ namespace Klak.Wiring
         [Inlet]
         public float inputValue {
             set {
-                if (enabled) {
-                    var v = BasicMath.Lerp(_vector0, _vector1, value);
-                    _vectorEvent.Invoke(v);
-                }
+                if (!enabled) return;
+                _vectorEvent.Invoke(BasicMath.Lerp(_vector0, _vector1, value));
             }
         }
 

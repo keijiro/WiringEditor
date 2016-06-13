@@ -61,52 +61,10 @@ namespace Klak.Wiring.Patcher
                     );
                     return true;
                 }
-                if (actionType == typeof(UnityAction<bool>))
-                {
-                    UnityEventTools.AddBoolPersistentListener(
-                        triggerEvent, (UnityAction<bool>)targetAction, false
-                    );
-                    return true;
-                }
-                if (actionType == typeof(UnityAction<int>))
-                {
-                    UnityEventTools.AddIntPersistentListener(
-                        triggerEvent, (UnityAction<int>)targetAction, 0
-                    );
-                    return true;
-                }
                 if (actionType == typeof(UnityAction<float>))
                 {
                     UnityEventTools.AddFloatPersistentListener(
                         triggerEvent, (UnityAction<float>)targetAction, 0.0f
-                    );
-                    return true;
-                }
-            }
-            else if (triggerEvent is UnityEvent<bool>)
-            {
-                // The trigger event has a bool parameter.
-                // Then the target method should have a bool parameter too.
-                if (actionType == typeof(UnityAction<bool>))
-                {
-                    // Add the action to the event.
-                    UnityEventTools.AddPersistentListener(
-                       (UnityEvent<bool>)triggerEvent,
-                       (UnityAction<bool>)targetAction
-                    );
-                    return true;
-                }
-            }
-            else if (triggerEvent is UnityEvent<int>)
-            {
-                // The trigger event has an int parameter.
-                // Then the target method should have an int parameter too.
-                if (actionType == typeof(UnityAction<int>))
-                {
-                    // Add the action to the event.
-                    UnityEventTools.AddPersistentListener(
-                       (UnityEvent<int>)triggerEvent,
-                       (UnityAction<int>)targetAction
                     );
                     return true;
                 }
@@ -135,6 +93,20 @@ namespace Klak.Wiring.Patcher
                     UnityEventTools.AddPersistentListener(
                        (UnityEvent<Vector3>)triggerEvent,
                        (UnityAction<Vector3>)targetAction
+                    );
+                    return true;
+                }
+            }
+            else if (triggerEvent is UnityEvent<Quaternion>)
+            {
+                // The trigger event has a Quaternion parameter.
+                // Then the target method should have a Quaternion parameter too.
+                if (actionType == typeof(UnityAction<Quaternion>))
+                {
+                    // Add the action to the event.
+                    UnityEventTools.AddPersistentListener(
+                       (UnityEvent<Quaternion>)triggerEvent,
+                       (UnityAction<Quaternion>)targetAction
                     );
                     return true;
                 }
@@ -193,11 +165,10 @@ namespace Klak.Wiring.Patcher
             var paramType = args[0].ParameterType;
 
             // Returns one of the corrensponding action types.
-            if (paramType == typeof(bool   )) return typeof(UnityAction<bool   >);
-            if (paramType == typeof(int    )) return typeof(UnityAction<int    >);
-            if (paramType == typeof(float  )) return typeof(UnityAction<float  >);
-            if (paramType == typeof(Vector3)) return typeof(UnityAction<Vector3>);
-            if (paramType == typeof(Color  )) return typeof(UnityAction<Color  >);
+            if (paramType == typeof(float     )) return typeof(UnityAction<float     >);
+            if (paramType == typeof(Vector3   )) return typeof(UnityAction<Vector3   >);
+            if (paramType == typeof(Quaternion)) return typeof(UnityAction<Quaternion>);
+            if (paramType == typeof(Color     )) return typeof(UnityAction<Color     >);
 
             // No one matches the method type.
             return null;

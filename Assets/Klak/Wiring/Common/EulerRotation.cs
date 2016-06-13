@@ -22,58 +22,25 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
+using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Float To Color")]
-    public class FloatToColor : NodeBase
+    [AddComponentMenu("Klak/Wiring/Euler Rotation")]
+    public class EulerRotation : NodeBase
     {
-        #region Public Properties
-
-        public enum ColorMode { Gradient, ColorArray }
-
-        [SerializeField]
-        ColorMode _colorMode = ColorMode.Gradient;
-
-        [SerializeField]
-        Gradient _gradient = new Gradient();
-
-        [SerializeField]
-        [ColorUsage(true, true, 0, 16, 0.125f, 3)]
-        Color[] _colorArray = new Color[2] { Color.black, Color.white };
-
-        #endregion
-
         #region Node I/O
 
         [Inlet]
-        public float inputValue {
+        public Vector3 eulerAngles {
             set {
-                if (!enabled)
-                {
-                    // Do nothing.
-                }
-                else if (_colorMode == ColorMode.Gradient)
-                {
-                    _colorEvent.Invoke(_gradient.Evaluate(value));
-                }
-                else // ColorArray
-                {
-                    var len = _colorArray.Length;
-
-                    var idx = Mathf.FloorToInt(value * (len - 1));
-                    idx = Mathf.Clamp(idx, 0, len - 2);
-
-                    var x = value * (len - 1) - idx;
-                    var y = Color.Lerp(_colorArray[idx], _colorArray[idx + 1], x);
-
-                    _colorEvent.Invoke(y);
-                }
+                if (!enabled) return;
+                _rotationEvent.Invoke(Quaternion.Euler(value));
             }
         }
 
         [SerializeField, Outlet]
-        ColorEvent _colorEvent = new ColorEvent();
+        QuaternionEvent _rotationEvent = new QuaternionEvent();
 
         #endregion
     }

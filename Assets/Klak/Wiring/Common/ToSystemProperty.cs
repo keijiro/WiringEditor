@@ -56,12 +56,6 @@ namespace Klak.Wiring
         }
 
         [Inlet]
-        public bool fog {
-            get { return RenderSettings.fog; }
-            set { RenderSettings.fog = value; }
-        }
-
-        [Inlet]
         public Color fogColor {
             get { return RenderSettings.fogColor; }
             set { RenderSettings.fogColor = value; }
