@@ -27,48 +27,33 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(KeyInput))]
-    public class KeyInputEditor : Editor
+    [CustomEditor(typeof(FloatToVector))]
+    public class FloatToVectorEditor : Editor
     {
-        SerializedProperty _keyCode;
-        SerializedProperty _offValue;
-        SerializedProperty _onValue;
-        SerializedProperty _interpolator;
-        SerializedProperty _keyDownEvent;
-        SerializedProperty _keyUpEvent;
-        SerializedProperty _valueEvent;
+        SerializedProperty _vector0;
+        SerializedProperty _vector1;
+        SerializedProperty _vectorEvent;
+
+        static GUIContent _textVector0 = new GUIContent("Value at 0");
+        static GUIContent _textVector1 = new GUIContent("Value at 1");
 
         void OnEnable()
         {
-            _keyCode = serializedObject.FindProperty("_keyCode");
-            _offValue = serializedObject.FindProperty("_offValue");
-            _onValue = serializedObject.FindProperty("_onValue");
-            _interpolator = serializedObject.FindProperty("_interpolator");
-            _keyDownEvent = serializedObject.FindProperty("_keyDownEvent");
-            _keyUpEvent = serializedObject.FindProperty("_keyUpEvent");
-            _valueEvent = serializedObject.FindProperty("_valueEvent");
+            _vector0 = serializedObject.FindProperty("_vector0");
+            _vector1 = serializedObject.FindProperty("_vector1");
+            _vectorEvent = serializedObject.FindProperty("_vectorEvent");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_keyCode);
+            EditorGUILayout.PropertyField(_vector0, _textVector0);
+            EditorGUILayout.PropertyField(_vector1, _textVector1);
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_offValue);
-            EditorGUILayout.PropertyField(_onValue);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_interpolator);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_keyDownEvent);
-            EditorGUILayout.PropertyField(_keyUpEvent);
-            EditorGUILayout.PropertyField(_valueEvent);
+            EditorGUILayout.PropertyField(_vectorEvent);
 
             serializedObject.ApplyModifiedProperties();
         }

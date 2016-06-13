@@ -1,0 +1,67 @@
+//
+// Klak - Utilities for creative coding with Unity
+//
+// Copyright (C) 2016 Keijiro Takahashi
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+using UnityEngine;
+using Klak.Math;
+
+namespace Klak.Wiring
+{
+    [AddComponentMenu("Klak/Wiring/Float To Vector")]
+    public class FloatToVector : NodeBase
+    {
+        #region Public Properties
+
+        public Vector3 vector0 {
+            get { return _vector0; }
+            set { _vector0 = value; }
+        }
+
+        [SerializeField] Vector3 _vector0 = Vector3.zero;
+
+        public Vector3 vector1 {
+            get { return _vector1; }
+            set { _vector1 = value; }
+        }
+
+        [SerializeField] Vector3 _vector1 = Vector3.right;
+
+        #endregion
+
+        #region Node I/O
+
+        [Inlet]
+        public float inputValue {
+            set {
+                if (enabled) {
+                    var v = BasicMath.Lerp(_vector0, _vector1, value);
+                    _vectorEvent.Invoke(v);
+                }
+            }
+        }
+
+        [SerializeField, Outlet]
+        Vector3Event _vectorEvent = new Vector3Event();
+
+        #endregion
+    }
+}
