@@ -32,13 +32,13 @@ namespace Klak.Wiring
     {
         SerializedProperty _frequency;
         SerializedProperty _octaves;
-        SerializedProperty _valueEvent;
+        SerializedProperty _outputEvent;
 
         void OnEnable()
         {
             _frequency = serializedObject.FindProperty("_frequency");
             _octaves = serializedObject.FindProperty("_octaves");
-            _valueEvent = serializedObject.FindProperty("_valueEvent");
+            _outputEvent = serializedObject.FindProperty("_outputEvent");
         }
 
         public override void OnInspectorGUI()
@@ -50,7 +50,7 @@ namespace Klak.Wiring
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_valueEvent);
+            EditorGUILayout.PropertyField(_outputEvent);
 
             serializedObject.ApplyModifiedProperties();
         }

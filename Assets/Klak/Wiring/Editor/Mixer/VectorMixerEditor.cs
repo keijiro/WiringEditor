@@ -27,21 +27,15 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatFilter))]
-    public class FloatFilterEditor : Editor
+    [CustomEditor(typeof(VectorMixer))]
+    public class VectorMixerEditor : Editor
     {
-        SerializedProperty _responseCurve;
-        SerializedProperty _interpolator;
-        SerializedProperty _amplitude;
-        SerializedProperty _bias;
+        SerializedProperty _modulationType;
         SerializedProperty _outputEvent;
 
         void OnEnable()
         {
-            _responseCurve = serializedObject.FindProperty("_responseCurve");
-            _interpolator = serializedObject.FindProperty("_interpolator");
-            _amplitude = serializedObject.FindProperty("_amplitude");
-            _bias = serializedObject.FindProperty("_bias");
+            _modulationType = serializedObject.FindProperty("_modulationType");
             _outputEvent = serializedObject.FindProperty("_outputEvent");
         }
 
@@ -49,24 +43,7 @@ namespace Klak.Wiring
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_responseCurve);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_amplitude);
-            EditorGUILayout.PropertyField(_bias);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.HelpBox(
-                "Output = Response(Input) * Amplitude + Bias\n" +
-                "Output value will be interpolated the setting below.",
-                MessageType.None, true
-            );
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_interpolator);
+            EditorGUILayout.PropertyField(_modulationType);
 
             EditorGUILayout.Space();
 

@@ -42,25 +42,25 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public Vector3 inputValue {
+        public Vector3 input {
             set {
                 if (!enabled) return;
                 _inputValue = value;
-                _vectorEvent.Invoke(MixValues());
+                _outputEvent.Invoke(MixValues());
             }
         }
 
         [Inlet]
-        public Vector3 modulationValue {
+        public Vector3 modulation {
             set {
                 if (!enabled) return;
                 _modulationValue = value;
-                _vectorEvent.Invoke(MixValues());
+                _outputEvent.Invoke(MixValues());
             }
         }
 
         [SerializeField, Outlet]
-        Vector3Event _vectorEvent = new Vector3Event();
+        Vector3Event _outputEvent = new Vector3Event();
 
         #endregion
 

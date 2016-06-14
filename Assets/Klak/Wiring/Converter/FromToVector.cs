@@ -52,7 +52,7 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public float inputValue {
+        public float input {
             set {
                 if (!enabled) return;
                 var v = BasicMath.Lerp(_vectorFrom, _vectorTo, value);

@@ -42,25 +42,25 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public float inputValue {
+        public float input {
             set {
                 if (!enabled) return;
                 _inputValue = value;
-                _valueEvent.Invoke(MixValues());
+                _outputEvent.Invoke(MixValues());
             }
         }
 
         [Inlet]
-        public float modulationValue {
+        public float modulation {
             set {
                 if (!enabled) return;
                 _modulationValue = value;
-                _valueEvent.Invoke(MixValues());
+                _outputEvent.Invoke(MixValues());
             }
         }
 
         [SerializeField, Outlet]
-        FloatEvent _valueEvent = new FloatEvent();
+        FloatEvent _outputEvent = new FloatEvent();
 
         #endregion
 

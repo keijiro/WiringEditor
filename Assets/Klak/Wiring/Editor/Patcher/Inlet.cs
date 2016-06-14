@@ -73,14 +73,7 @@ namespace Klak.Wiring.Patcher
 
         static string MakeDisplayName(string name)
         {
-            // Apply the standard nicifying rule.
-            var temp = ObjectNames.NicifyVariableName(name);
-
-            // Remove tailing "Value".
-            if (temp.EndsWith(" Value"))
-                temp = temp.Substring(0, temp.Length - 6);
-
-            return temp;
+            return ObjectNames.NicifyVariableName(name);
         }
 
         #endregion

@@ -42,7 +42,7 @@ namespace Klak.Wiring
         #region Node I/O
 
         [SerializeField, Outlet]
-        FloatEvent _valueEvent = new FloatEvent();
+        FloatEvent _outputEvent = new FloatEvent();
 
         #endregion
 
@@ -60,9 +60,9 @@ namespace Klak.Wiring
             _time += Time.deltaTime * _frequency;
 
             if (_octaves > 1)
-                _valueEvent.Invoke(Perlin.Fbm(_time, _octaves));
+                _outputEvent.Invoke(Perlin.Fbm(_time, _octaves));
             else
-                _valueEvent.Invoke(Perlin.Noise(_time));
+                _outputEvent.Invoke(Perlin.Noise(_time));
         }
 
         #endregion

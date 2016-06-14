@@ -48,7 +48,7 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public float inputValue {
+        public float input {
             set {
                 if (!enabled) return;
 
@@ -57,12 +57,12 @@ namespace Klak.Wiring
                 if (_interpolator.enabled)
                     _floatValue.targetValue = EvalResponse();
                 else
-                    _valueEvent.Invoke(EvalResponse());
+                    _outputEvent.Invoke(EvalResponse());
             }
         }
 
         [SerializeField, Outlet]
-        FloatEvent _valueEvent = new FloatEvent();
+        FloatEvent _outputEvent = new FloatEvent();
 
         #endregion
 
@@ -88,7 +88,7 @@ namespace Klak.Wiring
         void Update()
         {
             if (_interpolator.enabled)
-                _valueEvent.Invoke(_floatValue.Step());
+                _outputEvent.Invoke(_floatValue.Step());
         }
 
         #endregion

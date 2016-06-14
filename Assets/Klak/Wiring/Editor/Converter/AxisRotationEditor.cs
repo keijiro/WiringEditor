@@ -31,18 +31,15 @@ namespace Klak.Wiring
     public class AxisRotationEditor : Editor
     {
         SerializedProperty _rotationAxis;
-        SerializedProperty _angle0;
-        SerializedProperty _angle1;
+        SerializedProperty _angleMultiplier;
+        SerializedProperty _angleBias;
         SerializedProperty _rotationEvent;
-
-        static GUIContent _textAngle0 = new GUIContent("Angle at 0");
-        static GUIContent _textAngle1 = new GUIContent("Angle at 1");
 
         void OnEnable()
         {
             _rotationAxis = serializedObject.FindProperty("_rotationAxis");
-            _angle0 = serializedObject.FindProperty("_angle0");
-            _angle1 = serializedObject.FindProperty("_angle1");
+            _angleMultiplier = serializedObject.FindProperty("_angleMultiplier");
+            _angleBias = serializedObject.FindProperty("_angleBias");
             _rotationEvent = serializedObject.FindProperty("_rotationEvent");
         }
 
@@ -54,8 +51,15 @@ namespace Klak.Wiring
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_angle0, _textAngle0);
-            EditorGUILayout.PropertyField(_angle1, _textAngle1);
+            EditorGUILayout.PropertyField(_angleMultiplier);
+            EditorGUILayout.PropertyField(_angleBias);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.HelpBox(
+                "RotationAngle = InputAngle * Multiplier + Bias",
+                MessageType.None, true
+            );
 
             EditorGUILayout.Space();
 

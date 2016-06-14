@@ -31,12 +31,12 @@ namespace Klak.Wiring
     public class FloatMixerEditor : Editor
     {
         SerializedProperty _modulationType;
-        SerializedProperty _valueEvent;
+        SerializedProperty _outputEvent;
 
         void OnEnable()
         {
             _modulationType = serializedObject.FindProperty("_modulationType");
-            _valueEvent = serializedObject.FindProperty("_valueEvent");
+            _outputEvent = serializedObject.FindProperty("_outputEvent");
         }
 
         public override void OnInspectorGUI()
@@ -47,7 +47,7 @@ namespace Klak.Wiring
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_valueEvent);
+            EditorGUILayout.PropertyField(_outputEvent);
 
             serializedObject.ApplyModifiedProperties();
         }

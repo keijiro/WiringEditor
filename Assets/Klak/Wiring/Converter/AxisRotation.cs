@@ -22,7 +22,6 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using Klak.Math;
 
 namespace Klak.Wiring
 {
@@ -39,32 +38,32 @@ namespace Klak.Wiring
         [SerializeField]
         Vector3 _rotationAxis = Vector3.up;
 
-        public float angle0 {
-            get { return _angle0; }
-            set { _angle0 = value; }
+        public float angleMultiplier {
+            get { return _angleMultiplier; }
+            set { _angleMultiplier = value; }
         }
 
         [SerializeField]
-        float _angle0 = 0.0f;
+        float _angleMultiplier = 90.0f;
 
-        public float angle1 {
-            get { return _angle1; }
-            set { _angle1 = value; }
+        public float angleBias {
+            get { return _angleBias; }
+            set { _angleBias = value; }
         }
 
         [SerializeField]
-        float _angle1 = 90.0f;
+        float _angleBias = 0.0f;
 
         #endregion
 
         #region Node I/O
 
         [Inlet]
-        public float inputValue {
+        public float angle {
             set {
                 if (!enabled) return;
 
-                var a = BasicMath.Lerp(_angle0, _angle1, value);
+                var a = value * _angleMultiplier + _angleBias;
                 var r = Quaternion.AngleAxis(a, _rotationAxis);
 
                 _rotationEvent.Invoke(r);
