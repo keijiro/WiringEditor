@@ -34,6 +34,7 @@ namespace Klak.Wiring
         SerializedProperty _interpolator;
         SerializedProperty _amplitude;
         SerializedProperty _bias;
+        SerializedProperty _valueEvent;
 
         void OnEnable()
         {
@@ -41,6 +42,7 @@ namespace Klak.Wiring
             _interpolator = serializedObject.FindProperty("_interpolator");
             _amplitude = serializedObject.FindProperty("_amplitude");
             _bias = serializedObject.FindProperty("_bias");
+            _valueEvent = serializedObject.FindProperty("_valueEvent");
         }
 
         public override void OnInspectorGUI()
@@ -65,6 +67,10 @@ namespace Klak.Wiring
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(_interpolator);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(_valueEvent);
 
             serializedObject.ApplyModifiedProperties();
         }
