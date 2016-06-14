@@ -27,29 +27,15 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(ValueMixer))]
-    public class ValueMixerEditor : Editor
+    [CustomEditor(typeof(FloatMixer))]
+    public class FloatMixerEditor : Editor
     {
-        SerializedProperty _inputCurve;
         SerializedProperty _modulationType;
-        SerializedProperty _modulationCurve;
-        SerializedProperty _interpolator;
-        SerializedProperty _value0;
-        SerializedProperty _value1;
         SerializedProperty _valueEvent;
-
-        static GUIContent _textModulation = new GUIContent("Modulation");
-        static GUIContent _textValue0 = new GUIContent("Value at 0");
-        static GUIContent _textValue1 = new GUIContent("Value at 1");
 
         void OnEnable()
         {
-            _inputCurve = serializedObject.FindProperty("_inputCurve");
             _modulationType = serializedObject.FindProperty("_modulationType");
-            _modulationCurve = serializedObject.FindProperty("_modulationCurve");
-            _interpolator = serializedObject.FindProperty("_interpolator");
-            _value0 = serializedObject.FindProperty("_value0");
-            _value1 = serializedObject.FindProperty("_value1");
             _valueEvent = serializedObject.FindProperty("_valueEvent");
         }
 
@@ -57,27 +43,10 @@ namespace Klak.Wiring
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_inputCurve);
+            EditorGUILayout.PropertyField(_modulationType);
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_modulationType, _textModulation);
-            if (_modulationType.hasMultipleDifferentValues ||
-                _modulationType.enumValueIndex != 0)
-            {
-                EditorGUILayout.PropertyField(_modulationCurve);
-            }
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_interpolator);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_value0, _textValue0);
-            EditorGUILayout.PropertyField(_value1, _textValue1);
-
-            EditorGUILayout.Space();
             EditorGUILayout.PropertyField(_valueEvent);
 
             serializedObject.ApplyModifiedProperties();

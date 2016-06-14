@@ -22,31 +22,47 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEditor;
+using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [CanEditMultipleObjects]
-    [CustomEditor(typeof(ToTransform))]
-    public class ToTransformEditor : Editor
+    [AddComponentMenu("Klak/Wiring/Convert/From To Vector")]
+    public class FromToVector : NodeBase
     {
-        SerializedProperty _targetTransform;
-        SerializedProperty _addToOriginal;
+        #region Public properties
 
-        void OnEnable()
-        {
-            _targetTransform = serializedObject.FindProperty("_targetTransform");
-            _addToOriginal = serializedObject.FindProperty("_addToOriginal");
+        public Vector3 vectorFrom {
+            get { return _vectorFrom; }
+            set { _vectorFrom = value; }
         }
 
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
+        [SerializeField]
+        Vector3 _vectorFrom = Vector3.zero;
 
-            EditorGUILayout.PropertyField(_targetTransform);
-            EditorGUILayout.PropertyField(_addToOriginal);
-
-            serializedObject.ApplyModifiedProperties();
+        public Vector3 vectorTo {
+            get { return _vectorTo; }
+            set { _vectorTo = value; }
         }
+
+        [SerializeField]
+        Vector3 _vectorTo = Vector3.up;
+
+        #endregion
+
+        #region Node I/O
+
+        [Inlet]
+        public float inputValue {
+            set {
+                if (!enabled) return;
+                var v = BasicMath.Lerp(_vectorFrom, _vectorTo, value);
+                _vectorEvent.Invoke(v);
+            }
+        }
+
+        [SerializeField, Outlet]
+        Vector3Event _vectorEvent = new Vector3Event();
+
+        #endregion
     }
 }

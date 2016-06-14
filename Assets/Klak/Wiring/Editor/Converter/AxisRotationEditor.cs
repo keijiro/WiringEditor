@@ -27,33 +27,39 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatToVector))]
-    public class FloatToVectorEditor : Editor
+    [CustomEditor(typeof(AxisRotation))]
+    public class AxisRotationEditor : Editor
     {
-        SerializedProperty _vector0;
-        SerializedProperty _vector1;
-        SerializedProperty _vectorEvent;
+        SerializedProperty _rotationAxis;
+        SerializedProperty _angle0;
+        SerializedProperty _angle1;
+        SerializedProperty _rotationEvent;
 
-        static GUIContent _textVector0 = new GUIContent("Value at 0");
-        static GUIContent _textVector1 = new GUIContent("Value at 1");
+        static GUIContent _textAngle0 = new GUIContent("Angle at 0");
+        static GUIContent _textAngle1 = new GUIContent("Angle at 1");
 
         void OnEnable()
         {
-            _vector0 = serializedObject.FindProperty("_vector0");
-            _vector1 = serializedObject.FindProperty("_vector1");
-            _vectorEvent = serializedObject.FindProperty("_vectorEvent");
+            _rotationAxis = serializedObject.FindProperty("_rotationAxis");
+            _angle0 = serializedObject.FindProperty("_angle0");
+            _angle1 = serializedObject.FindProperty("_angle1");
+            _rotationEvent = serializedObject.FindProperty("_rotationEvent");
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_vector0, _textVector0);
-            EditorGUILayout.PropertyField(_vector1, _textVector1);
+            EditorGUILayout.PropertyField(_rotationAxis);
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.PropertyField(_vectorEvent);
+            EditorGUILayout.PropertyField(_angle0, _textAngle0);
+            EditorGUILayout.PropertyField(_angle1, _textAngle1);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(_rotationEvent);
 
             serializedObject.ApplyModifiedProperties();
         }

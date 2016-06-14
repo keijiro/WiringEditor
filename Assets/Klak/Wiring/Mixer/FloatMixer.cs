@@ -22,26 +22,20 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Float Filter")]
-    public class FloatFilter : NodeBase
+    [AddComponentMenu("Klak/Wiring/Mixer/Float Mixer")]
+    public class FloatMixer : NodeBase
     {
-        #region Public properties
+        #region Editable properties
+
+        public enum ModulationType {
+            Off, Add, Subtract, Multiply, Divide, Minimum, Maximum
+        }
 
         [SerializeField]
-        AnimationCurve _responseCurve = AnimationCurve.Linear(0, 0, 1, 1);
-
-        [SerializeField]
-        FloatInterpolator.Config _interpolator = FloatInterpolator.Config.Direct;
-
-        [SerializeField]
-        float _bias = 0.0f;
-
-        [SerializeField]
-        float _amplitude = 1.0f;
+        ModulationType _modulationType = ModulationType.Add;
 
         #endregion
 
@@ -50,12 +44,18 @@ namespace Klak.Wiring
         [Inlet]
         public float inputValue {
             set {
+                if (!enabled) return;
                 _inputValue = value;
-                if (enabled)
-                    if (_interpolator.enabled)
-                        _floatValue.targetValue = EvalResponse();
-                    else
-                        _valueEvent.Invoke(EvalResponse());
+                _valueEvent.Invoke(MixValues());
+            }
+        }
+
+        [Inlet]
+        public float modulationValue {
+            set {
+                if (!enabled) return;
+                _modulationValue = value;
+                _valueEvent.Invoke(MixValues());
             }
         }
 
@@ -67,26 +67,27 @@ namespace Klak.Wiring
         #region Private members
 
         float _inputValue;
-        FloatInterpolator _floatValue;
+        float _modulationValue;
 
-        float EvalResponse()
+        float MixValues()
         {
-            return _responseCurve.Evaluate(_inputValue) * _amplitude + _bias;
-        }
-
-        #endregion
-
-        #region MonoBehaviour functions
-
-        void Start()
-        {
-            _floatValue = new FloatInterpolator(0, _interpolator);
-        }
-
-        void Update()
-        {
-            if (_interpolator.enabled)
-                _valueEvent.Invoke(_floatValue.Step());
+            switch (_modulationType)
+            {
+                case ModulationType.Add:
+                    return _inputValue + _modulationValue;
+                case ModulationType.Subtract:
+                    return _inputValue - _modulationValue;
+                case ModulationType.Multiply:
+                    return _inputValue * _modulationValue;
+                case ModulationType.Divide:
+                    return _inputValue / _modulationValue;
+                case ModulationType.Minimum:
+                    return Mathf.Min(_inputValue, _modulationValue);
+                case ModulationType.Maximum:
+                    return Mathf.Max(_inputValue, _modulationValue);
+            }
+            // Off
+            return _inputValue;
         }
 
         #endregion

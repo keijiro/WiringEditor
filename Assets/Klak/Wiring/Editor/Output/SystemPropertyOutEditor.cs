@@ -27,46 +27,11 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatFilter))]
-    public class FloatFilterEditor : Editor
+    [CustomEditor(typeof(SystemPropertyOut))]
+    public class SystemPropertyOutEditor : Editor
     {
-        SerializedProperty _responseCurve;
-        SerializedProperty _interpolator;
-        SerializedProperty _bias;
-        SerializedProperty _amplitude;
-
-        void OnEnable()
-        {
-            _responseCurve = serializedObject.FindProperty("_responseCurve");
-            _interpolator = serializedObject.FindProperty("_interpolator");
-            _bias = serializedObject.FindProperty("_bias");
-            _amplitude = serializedObject.FindProperty("_amplitude");
-        }
-
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
-
-            EditorGUILayout.PropertyField(_responseCurve);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_bias);
-            EditorGUILayout.PropertyField(_amplitude);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.HelpBox(
-                "Output = Response(Input) * Amplitude + Bias\n" +
-                "Output value will be interpolated the setting below.",
-                MessageType.None, true
-            );
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_interpolator);
-
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

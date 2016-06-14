@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatToColor))]
-    public class FloatToColorEditor : Editor
+    [CustomEditor(typeof(ColorRamp))]
+    public class ColorRampEditor : Editor
     {
         SerializedProperty _colorMode;
         SerializedProperty _gradient;
@@ -50,11 +50,11 @@ namespace Klak.Wiring
             EditorGUILayout.PropertyField(_colorMode);
 
             if (_colorMode.hasMultipleDifferentValues ||
-                _colorMode.enumValueIndex == (int)FloatToColor.ColorMode.Gradient)
+                _colorMode.enumValueIndex == (int)ColorRamp.ColorMode.Gradient)
                 EditorGUILayout.PropertyField(_gradient);
 
             if (_colorMode.hasMultipleDifferentValues ||
-                _colorMode.enumValueIndex == (int)FloatToColor.ColorMode.ColorArray)
+                _colorMode.enumValueIndex == (int)ColorRamp.ColorMode.ColorArray)
                 DrawColorArray();
 
             EditorGUILayout.Space();

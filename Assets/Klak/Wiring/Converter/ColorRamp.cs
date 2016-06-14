@@ -22,30 +22,25 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Float To Vector")]
-    public class FloatToVector : NodeBase
+    [AddComponentMenu("Klak/Wiring/Convert/Color Ramp")]
+    public class ColorRamp : NodeBase
     {
         #region Public properties
 
-        public Vector3 vector0 {
-            get { return _vector0; }
-            set { _vector0 = value; }
-        }
+        public enum ColorMode { Gradient, ColorArray }
 
         [SerializeField]
-        Vector3 _vector0 = Vector3.zero;
-
-        public Vector3 vector1 {
-            get { return _vector1; }
-            set { _vector1 = value; }
-        }
+        ColorMode _colorMode = ColorMode.Gradient;
 
         [SerializeField]
-        Vector3 _vector1 = Vector3.up;
+        Gradient _gradient = new Gradient();
+
+        [SerializeField]
+        [ColorUsage(true, true, 0, 16, 0.125f, 3)]
+        Color[] _colorArray = new Color[2] { Color.black, Color.white };
 
         #endregion
 
@@ -54,13 +49,31 @@ namespace Klak.Wiring
         [Inlet]
         public float inputValue {
             set {
-                if (!enabled) return;
-                _vectorEvent.Invoke(BasicMath.Lerp(_vector0, _vector1, value));
+                if (!enabled)
+                {
+                    // Do nothing.
+                }
+                else if (_colorMode == ColorMode.Gradient)
+                {
+                    _colorEvent.Invoke(_gradient.Evaluate(value));
+                }
+                else // ColorArray
+                {
+                    var len = _colorArray.Length;
+
+                    var idx = Mathf.FloorToInt(value * (len - 1));
+                    idx = Mathf.Clamp(idx, 0, len - 2);
+
+                    var x = value * (len - 1) - idx;
+                    var y = Color.Lerp(_colorArray[idx], _colorArray[idx + 1], x);
+
+                    _colorEvent.Invoke(y);
+                }
             }
         }
 
         [SerializeField, Outlet]
-        Vector3Event _vectorEvent = new Vector3Event();
+        ColorEvent _colorEvent = new ColorEvent();
 
         #endregion
     }

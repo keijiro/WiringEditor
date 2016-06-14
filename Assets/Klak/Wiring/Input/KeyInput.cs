@@ -22,57 +22,80 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
+using UnityEngine.Events;
+using System;
 using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Float To Rotation")]
-    public class FloatToRotation : NodeBase
+    [AddComponentMenu("Klak/Wiring/Input/Key Input")]
+    public class KeyInput : NodeBase
     {
-        #region Public properties
-
-        public Vector3 rotationAxis {
-            get { return _rotationAxis; }
-            set { _rotationAxis = value; }
-        }
+        #region Editable properties
 
         [SerializeField]
-        Vector3 _rotationAxis = Vector3.up;
-
-        public float angle0 {
-            get { return _angle0; }
-            set { _angle0 = value; }
-        }
+        KeyCode _keyCode;
 
         [SerializeField]
-        float _angle0 = 0.0f;
-
-        public float angle1 {
-            get { return _angle1; }
-            set { _angle1 = value; }
-        }
+        float _offValue = 0.0f;
 
         [SerializeField]
-        float _angle1 = 90.0f;
+        float _onValue = 1.0f;
+
+        [SerializeField]
+        FloatInterpolator.Config _interpolator;
 
         #endregion
 
         #region Node I/O
 
-        [Inlet]
-        public float inputValue {
-            set {
-                if (!enabled) return;
-
-                var a = BasicMath.Lerp(_angle0, _angle1, value);
-                var r = Quaternion.AngleAxis(a, _rotationAxis);
-
-                _rotationEvent.Invoke(r);
-            }
-        }
+        [SerializeField, Outlet]
+        VoidEvent _keyDownEvent = new VoidEvent();
 
         [SerializeField, Outlet]
-        QuaternionEvent _rotationEvent = new QuaternionEvent();
+        VoidEvent _keyUpEvent = new VoidEvent();
+
+        [SerializeField, Outlet]
+        FloatEvent _valueEvent = new FloatEvent();
+
+        #endregion
+
+        #region Private members
+
+        bool IsKeyDown {
+            get { return Input.GetKeyDown(_keyCode); }
+        }
+
+        bool IsKeyUp {
+            get { return Input.GetKeyUp(_keyCode); }
+        }
+
+        FloatInterpolator _floatValue;
+
+        #endregion
+
+        #region MonoBehaviour functions
+
+        void Start()
+        {
+            _floatValue = new FloatInterpolator(0, _interpolator);
+        }
+
+        void Update()
+        {
+            if (IsKeyDown)
+            {
+                _keyDownEvent.Invoke();
+                _floatValue.targetValue = _onValue;
+            }
+            else if (IsKeyUp)
+            {
+                _keyUpEvent.Invoke();
+                _floatValue.targetValue = _offValue;
+            }
+
+            _valueEvent.Invoke(_floatValue.Step());
+        }
 
         #endregion
     }

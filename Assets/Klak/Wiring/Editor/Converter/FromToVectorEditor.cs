@@ -22,26 +22,40 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using Klak.Math;
+using UnityEditor;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Euler Rotation")]
-    public class EulerRotation : NodeBase
+    [CanEditMultipleObjects]
+    [CustomEditor(typeof(FromToVector))]
+    public class FromToVectorEditor : Editor
     {
-        #region Node I/O
+        SerializedProperty _vectorFrom;
+        SerializedProperty _vectorTo;
+        SerializedProperty _vectorEvent;
 
-        [Inlet]
-        public Vector3 eulerAngles {
-            set {
-                if (!enabled) return;
-                _rotationEvent.Invoke(Quaternion.Euler(value));
-            }
+        static GUIContent _textVectorFrom = new GUIContent("From (Value at 0)");
+        static GUIContent _textVectorTo = new GUIContent("To (Value at 1)");
+
+        void OnEnable()
+        {
+            _vectorFrom = serializedObject.FindProperty("_vectorFrom");
+            _vectorTo = serializedObject.FindProperty("_vectorTo");
+            _vectorEvent = serializedObject.FindProperty("_vectorEvent");
         }
 
-        [SerializeField, Outlet]
-        QuaternionEvent _rotationEvent = new QuaternionEvent();
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
 
-        #endregion
+            EditorGUILayout.PropertyField(_vectorFrom, _textVectorFrom);
+            EditorGUILayout.PropertyField(_vectorTo, _textVectorTo);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(_vectorEvent);
+
+            serializedObject.ApplyModifiedProperties();
+        }
     }
 }

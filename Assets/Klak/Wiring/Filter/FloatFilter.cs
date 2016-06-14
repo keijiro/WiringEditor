@@ -22,55 +22,63 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEngine.Events;
-using System;
 using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Input/Key Input")]
-    public class KeyInput : NodeBase
+    [AddComponentMenu("Klak/Wiring/Filter/Float Filter")]
+    public class FloatFilter : NodeBase
     {
-        #region Editable Properties
+        #region Public properties
 
         [SerializeField]
-        KeyCode _keyCode;
+        AnimationCurve _responseCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
         [SerializeField]
-        float _offValue = 0.0f;
+        FloatInterpolator.Config _interpolator = FloatInterpolator.Config.Direct;
 
         [SerializeField]
-        float _onValue = 1.0f;
+        float _amplitude = 1.0f;
 
         [SerializeField]
-        FloatInterpolator.Config _interpolator;
+        float _bias = 0.0f;
 
-        [SerializeField, Outlet]
-        VoidEvent _keyDownEvent = new VoidEvent();
+        #endregion
 
-        [SerializeField, Outlet]
-        VoidEvent _keyUpEvent = new VoidEvent();
+        #region Node I/O
+
+        [Inlet]
+        public float inputValue {
+            set {
+                if (!enabled) return;
+
+                _inputValue = value;
+
+                if (_interpolator.enabled)
+                    _floatValue.targetValue = EvalResponse();
+                else
+                    _valueEvent.Invoke(EvalResponse());
+            }
+        }
 
         [SerializeField, Outlet]
         FloatEvent _valueEvent = new FloatEvent();
 
         #endregion
 
-        #region Private Properties And Variables
+        #region Private members
 
-        bool IsKeyDown {
-            get { return Input.GetKeyDown(_keyCode); }
-        }
-
-        bool IsKeyUp {
-            get { return Input.GetKeyUp(_keyCode); }
-        }
-
+        float _inputValue;
         FloatInterpolator _floatValue;
+
+        float EvalResponse()
+        {
+            return _responseCurve.Evaluate(_inputValue) * _amplitude + _bias;
+        }
 
         #endregion
 
-        #region MonoBehaviour Functions
+        #region MonoBehaviour functions
 
         void Start()
         {
@@ -79,18 +87,8 @@ namespace Klak.Wiring
 
         void Update()
         {
-            if (IsKeyDown)
-            {
-                _keyDownEvent.Invoke();
-                _floatValue.targetValue = _onValue;
-            }
-            else if (IsKeyUp)
-            {
-                _keyUpEvent.Invoke();
-                _floatValue.targetValue = _offValue;
-            }
-
-            _valueEvent.Invoke(_floatValue.Step());
+            if (_interpolator.enabled)
+                _valueEvent.Invoke(_floatValue.Step());
         }
 
         #endregion

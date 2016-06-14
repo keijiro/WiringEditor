@@ -22,46 +22,25 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEditor;
 
 namespace Klak.Wiring
 {
-    [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatToRotation))]
-    public class FloatToRotationEditor : Editor
+    [AddComponentMenu("Klak/Wiring/Convert/Euler Rotation")]
+    public class EulerRotation : NodeBase
     {
-        SerializedProperty _rotationAxis;
-        SerializedProperty _angle0;
-        SerializedProperty _angle1;
-        SerializedProperty _rotationEvent;
+        #region Node I/O
 
-        static GUIContent _textAngle0 = new GUIContent("Angle at 0");
-        static GUIContent _textAngle1 = new GUIContent("Angle at 1");
-
-        void OnEnable()
-        {
-            _rotationAxis = serializedObject.FindProperty("_rotationAxis");
-            _angle0 = serializedObject.FindProperty("_angle0");
-            _angle1 = serializedObject.FindProperty("_angle1");
-            _rotationEvent = serializedObject.FindProperty("_rotationEvent");
+        [Inlet]
+        public Vector3 eulerAngles {
+            set {
+                if (!enabled) return;
+                _rotationEvent.Invoke(Quaternion.Euler(value));
+            }
         }
 
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
+        [SerializeField, Outlet]
+        QuaternionEvent _rotationEvent = new QuaternionEvent();
 
-            EditorGUILayout.PropertyField(_rotationAxis);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_angle0, _textAngle0);
-            EditorGUILayout.PropertyField(_angle1, _textAngle1);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_rotationEvent);
-
-            serializedObject.ApplyModifiedProperties();
-        }
+        #endregion
     }
 }

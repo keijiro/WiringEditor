@@ -22,25 +22,38 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
+using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Float To Color")]
-    public class FloatToColor : NodeBase
+    [AddComponentMenu("Klak/Wiring/Convert/Axis Rotation")]
+    public class AxisRotation : NodeBase
     {
         #region Public properties
 
-        public enum ColorMode { Gradient, ColorArray }
+        public Vector3 rotationAxis {
+            get { return _rotationAxis; }
+            set { _rotationAxis = value; }
+        }
 
         [SerializeField]
-        ColorMode _colorMode = ColorMode.Gradient;
+        Vector3 _rotationAxis = Vector3.up;
+
+        public float angle0 {
+            get { return _angle0; }
+            set { _angle0 = value; }
+        }
 
         [SerializeField]
-        Gradient _gradient = new Gradient();
+        float _angle0 = 0.0f;
+
+        public float angle1 {
+            get { return _angle1; }
+            set { _angle1 = value; }
+        }
 
         [SerializeField]
-        [ColorUsage(true, true, 0, 16, 0.125f, 3)]
-        Color[] _colorArray = new Color[2] { Color.black, Color.white };
+        float _angle1 = 90.0f;
 
         #endregion
 
@@ -49,31 +62,17 @@ namespace Klak.Wiring
         [Inlet]
         public float inputValue {
             set {
-                if (!enabled)
-                {
-                    // Do nothing.
-                }
-                else if (_colorMode == ColorMode.Gradient)
-                {
-                    _colorEvent.Invoke(_gradient.Evaluate(value));
-                }
-                else // ColorArray
-                {
-                    var len = _colorArray.Length;
+                if (!enabled) return;
 
-                    var idx = Mathf.FloorToInt(value * (len - 1));
-                    idx = Mathf.Clamp(idx, 0, len - 2);
+                var a = BasicMath.Lerp(_angle0, _angle1, value);
+                var r = Quaternion.AngleAxis(a, _rotationAxis);
 
-                    var x = value * (len - 1) - idx;
-                    var y = Color.Lerp(_colorArray[idx], _colorArray[idx + 1], x);
-
-                    _colorEvent.Invoke(y);
-                }
+                _rotationEvent.Invoke(r);
             }
         }
 
         [SerializeField, Outlet]
-        ColorEvent _colorEvent = new ColorEvent();
+        QuaternionEvent _rotationEvent = new QuaternionEvent();
 
         #endregion
     }

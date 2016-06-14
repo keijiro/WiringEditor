@@ -22,38 +22,37 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Klak.Wiring
 {
     [AddComponentMenu("Klak/Wiring/Filter/Threshold")]
     public class Threshold : NodeBase
     {
-        #region Editable Properties
-
-        [SerializeField] float _threshold = 0.01f;
-        [SerializeField] float _delayToOff = 0.0f;
-
-        [SerializeField, Outlet] VoidEvent _onEvent = new VoidEvent();
-        [SerializeField, Outlet] VoidEvent _offEvent = new VoidEvent();
-
-        #endregion
-
-        #region Public Properties
+        #region Public properties
 
         public float threshold {
             get { return _threshold; }
             set { _threshold = value; }
         }
 
+        [SerializeField] float _threshold = 0.01f;
+
         public float offDelay {
             get { return _delayToOff; }
             set { _delayToOff = value; }
         }
 
+        [SerializeField] float _delayToOff = 0.0f;
+
+        #endregion
+
+        #region Node I/O
+
         [Inlet]
         public float inputValue {
             set {
+                if (!enabled) return;
+
                 _currentValue = value;
 
                 if (_currentValue >= _threshold &&
@@ -65,9 +64,15 @@ namespace Klak.Wiring
             }
         }
 
+        [SerializeField, Outlet]
+        VoidEvent _onEvent = new VoidEvent();
+
+        [SerializeField, Outlet]
+        VoidEvent _offEvent = new VoidEvent();
+
         #endregion
 
-        #region Private Variables
+        #region Private members
 
         enum State { Dormant, Enabled, Disabled }
 
@@ -77,7 +82,7 @@ namespace Klak.Wiring
 
         #endregion
 
-        #region MonoBehaviour Functions
+        #region MonoBehaviour functions
 
         void Update()
         {

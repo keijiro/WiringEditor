@@ -26,57 +26,65 @@ using UnityEngine.Events;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/To System Property")]
-    public class ToSystemProperty : NodeBase
+    [AddComponentMenu("Klak/Wiring/Output/System Property Out")]
+    public class SystemPropertyOut : NodeBase
     {
         #region Public properties
 
         [Inlet]
         public float timeScale {
-            get { return Time.timeScale; }
-            set { Time.timeScale = value; }
+            set {
+                if (enabled) Time.timeScale = value;
+            }
         }
 
         [Inlet]
         public Vector3 gravity {
-            get { return Physics.gravity; }
-            set { Physics.gravity = value; }
+            set {
+                if (enabled) Physics.gravity = value;
+            }
         }
 
         [Inlet]
         public float ambientIntensity {
-            get { return RenderSettings.ambientIntensity; }
-            set { RenderSettings.ambientIntensity = value; }
+            set {
+                if (enabled) RenderSettings.ambientIntensity = value;
+            }
         }
 
         [Inlet]
         public float reflectionIntensity {
-            get { return RenderSettings.reflectionIntensity; }
-            set { RenderSettings.reflectionIntensity = value; }
+            set {
+                if (enabled) RenderSettings.reflectionIntensity = value;
+            }
         }
 
         [Inlet]
         public Color fogColor {
-            get { return RenderSettings.fogColor; }
-            set { RenderSettings.fogColor = value; }
+            set {
+                if (enabled) RenderSettings.fogColor = value;
+            }
         }
 
         [Inlet]
         public float fogDensity {
-            get { return RenderSettings.fogDensity; }
-            set { RenderSettings.fogDensity = value; }
+            set {
+                if (enabled) RenderSettings.fogDensity = value;
+            }
         }
 
         [Inlet]
         public float fogStartDistance {
-            get { return RenderSettings.fogStartDistance; }
-            set { RenderSettings.fogStartDistance = value; }
+            set {
+                if (enabled) RenderSettings.fogStartDistance = value;
+            }
         }
 
         [Inlet]
         public float fogEndDistance {
-            get { return RenderSettings.fogEndDistance; }
-            set { RenderSettings.fogEndDistance = value; }
+            set {
+                if (enabled) RenderSettings.fogEndDistance = value;
+            }
         }
 
         #endregion
