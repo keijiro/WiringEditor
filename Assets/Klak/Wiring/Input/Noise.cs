@@ -26,73 +26,43 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Input/Key Input")]
-    public class KeyInput : NodeBase
+    [AddComponentMenu("Klak/Wiring/Input/Noise")]
+    public class Noise : NodeBase
     {
         #region Editable properties
 
         [SerializeField]
-        KeyCode _keyCode;
+        float _frequency = 1.0f;
 
-        [SerializeField]
-        float _offValue = 0.0f;
-
-        [SerializeField]
-        float _onValue = 1.0f;
-
-        [SerializeField]
-        FloatInterpolator.Config _interpolator;
+        [SerializeField, Range(1, 8)]
+        int _octaves = 1;
 
         #endregion
 
         #region Node I/O
 
         [SerializeField, Outlet]
-        VoidEvent _keyDownEvent = new VoidEvent();
-
-        [SerializeField, Outlet]
-        VoidEvent _keyUpEvent = new VoidEvent();
-
-        [SerializeField, Outlet]
         FloatEvent _valueEvent = new FloatEvent();
-
-        #endregion
-
-        #region Private members
-
-        bool IsKeyDown {
-            get { return Input.GetKeyDown(_keyCode); }
-        }
-
-        bool IsKeyUp {
-            get { return Input.GetKeyUp(_keyCode); }
-        }
-
-        FloatInterpolator _floatValue;
 
         #endregion
 
         #region MonoBehaviour functions
 
+        float _time;
+
         void Start()
         {
-            _floatValue = new FloatInterpolator(0, _interpolator);
+            _time = Random.Range(-10000.0f, 0.0f);
         }
 
         void Update()
         {
-            if (IsKeyDown)
-            {
-                _keyDownEvent.Invoke();
-                _floatValue.targetValue = _onValue;
-            }
-            else if (IsKeyUp)
-            {
-                _keyUpEvent.Invoke();
-                _floatValue.targetValue = _offValue;
-            }
+            _time += Time.deltaTime * _frequency;
 
-            _valueEvent.Invoke(_floatValue.Step());
+            if (_octaves > 1)
+                _valueEvent.Invoke(Perlin.Fbm(_time, _octaves));
+            else
+                _valueEvent.Invoke(Perlin.Noise(_time));
         }
 
         #endregion
