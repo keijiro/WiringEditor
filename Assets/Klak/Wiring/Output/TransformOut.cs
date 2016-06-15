@@ -22,7 +22,6 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using Klak.Math;
 
 namespace Klak.Wiring
 {
