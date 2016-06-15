@@ -37,12 +37,27 @@ namespace Klak.Wiring
         [SerializeField, Range(1, 8)]
         int _octaves = 1;
 
+        [SerializeField]
+        float _bias = 0.0f;
+
+        [SerializeField]
+        float _amplitude = 1.0f;
+
         #endregion
 
         #region Node I/O
 
         [SerializeField, Outlet]
         FloatEvent _outputEvent = new FloatEvent();
+
+        #endregion
+
+        #region Private functions
+
+        void InvokeEvent(float noise)
+        {
+            _outputEvent.Invoke((noise + _bias) * _amplitude);
+        }
 
         #endregion
 
@@ -60,9 +75,9 @@ namespace Klak.Wiring
             _time += Time.deltaTime * _frequency;
 
             if (_octaves > 1)
-                _outputEvent.Invoke(Perlin.Fbm(_time, _octaves));
+                InvokeEvent(Perlin.Fbm(_time, _octaves));
             else
-                _outputEvent.Invoke(Perlin.Noise(_time));
+                InvokeEvent(Perlin.Noise(_time));
         }
 
         #endregion

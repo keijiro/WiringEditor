@@ -28,21 +28,13 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Filter/Threshold")]
     public class Threshold : NodeBase
     {
-        #region Public properties
+        #region Editable properties
 
-        public float threshold {
-            get { return _threshold; }
-            set { _threshold = value; }
-        }
+        [SerializeField]
+        float _threshold = 0.01f;
 
-        [SerializeField] float _threshold = 0.01f;
-
-        public float offDelay {
-            get { return _delayToOff; }
-            set { _delayToOff = value; }
-        }
-
-        [SerializeField] float _delayToOff = 0.0f;
+        [SerializeField]
+        float _delayToOff = 0.0f;
 
         #endregion
 

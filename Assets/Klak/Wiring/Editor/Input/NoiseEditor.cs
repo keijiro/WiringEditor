@@ -32,12 +32,16 @@ namespace Klak.Wiring
     {
         SerializedProperty _frequency;
         SerializedProperty _octaves;
+        SerializedProperty _bias;
+        SerializedProperty _amplitude;
         SerializedProperty _outputEvent;
 
         void OnEnable()
         {
             _frequency = serializedObject.FindProperty("_frequency");
             _octaves = serializedObject.FindProperty("_octaves");
+            _bias = serializedObject.FindProperty("_bias");
+            _amplitude = serializedObject.FindProperty("_amplitude");
             _outputEvent = serializedObject.FindProperty("_outputEvent");
         }
 
@@ -47,6 +51,18 @@ namespace Klak.Wiring
 
             EditorGUILayout.PropertyField(_frequency);
             EditorGUILayout.PropertyField(_octaves);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.PropertyField(_bias);
+            EditorGUILayout.PropertyField(_amplitude);
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.HelpBox(
+                "Output = (Noise + Bias) * Amplitude",
+                MessageType.None, true
+            );
 
             EditorGUILayout.Space();
 

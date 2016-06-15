@@ -25,13 +25,13 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Mixer/Float Mixer")]
-    public class FloatMixer : NodeBase
+    [AddComponentMenu("Klak/Wiring/Filter/Vector Mixer")]
+    public class VectorMixer : NodeBase
     {
         #region Editable properties
 
         public enum ModulationType {
-            Off, Add, Subtract, Multiply, Divide, Minimum, Maximum
+            Off, Add, Subtract, Multiply, Cross, Minimum, Maximum
         }
 
         [SerializeField]
@@ -42,7 +42,7 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public float input {
+        public Vector3 input {
             set {
                 if (!enabled) return;
                 _inputValue = value;
@@ -51,7 +51,7 @@ namespace Klak.Wiring
         }
 
         [Inlet]
-        public float modulation {
+        public Vector3 modulation {
             set {
                 if (!enabled) return;
                 _modulationValue = value;
@@ -60,16 +60,16 @@ namespace Klak.Wiring
         }
 
         [SerializeField, Outlet]
-        FloatEvent _outputEvent = new FloatEvent();
+        Vector3Event _outputEvent = new Vector3Event();
 
         #endregion
 
         #region Private members
 
-        float _inputValue;
-        float _modulationValue;
+        Vector3 _inputValue;
+        Vector3 _modulationValue;
 
-        float MixValues()
+        Vector3 MixValues()
         {
             switch (_modulationType)
             {
@@ -78,13 +78,13 @@ namespace Klak.Wiring
                 case ModulationType.Subtract:
                     return _inputValue - _modulationValue;
                 case ModulationType.Multiply:
-                    return _inputValue * _modulationValue;
-                case ModulationType.Divide:
-                    return _inputValue / _modulationValue;
+                    return Vector3.Scale(_inputValue, _modulationValue);
+                case ModulationType.Cross:
+                    return Vector3.Cross(_inputValue, _modulationValue);
                 case ModulationType.Minimum:
-                    return Mathf.Min(_inputValue, _modulationValue);
+                    return Vector3.Min(_inputValue, _modulationValue);
                 case ModulationType.Maximum:
-                    return Mathf.Max(_inputValue, _modulationValue);
+                    return Vector3.Max(_inputValue, _modulationValue);
             }
             // Off
             return _inputValue;

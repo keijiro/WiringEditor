@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Filter/Float Filter")]
     public class FloatFilter : NodeBase
     {
-        #region Public properties
+        #region Editable properties
 
         [SerializeField]
         AnimationCurve _responseCurve = AnimationCurve.Linear(0, 0, 1, 1);

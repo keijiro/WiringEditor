@@ -60,7 +60,7 @@ namespace Klak.Wiring
 
             EditorGUILayout.HelpBox(
                 "Output = Response(Input) * Amplitude + Bias\n" +
-                "Output value will be interpolated the setting below.",
+                "Output value will be interpolated with the setting below.",
                 MessageType.None, true
             );
 

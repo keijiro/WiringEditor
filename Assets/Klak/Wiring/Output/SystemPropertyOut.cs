@@ -29,7 +29,7 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Output/System Property Out")]
     public class SystemPropertyOut : NodeBase
     {
-        #region Public properties
+        #region Node I/O
 
         [Inlet]
         public float timeScale {

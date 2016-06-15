@@ -29,24 +29,10 @@ namespace Klak.Wiring
     [AddComponentMenu("Klak/Wiring/Output/Transform Out")]
     public class TransformOut : NodeBase
     {
-        #region Public properties
-
-        public Transform targetTransform {
-            get { return _targetTransform; }
-            set {
-                if (_targetTransform != null) OnDisable();
-                _targetTransform = value;
-                if (_targetTransform != null) OnEnable();
-            }
-        }
+        #region Editable properties
 
         [SerializeField]
         Transform _targetTransform;
-
-        public bool addToOriginal {
-            get { return _addToOriginal; }
-            set { _addToOriginal = value; }
-        }
 
         [SerializeField]
         bool _addToOriginal = true;
