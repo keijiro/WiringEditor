@@ -25,34 +25,16 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Axis Rotation")]
+    [AddComponentMenu("Klak/Wiring/Basic/Axis Rotation")]
     public class AxisRotation : NodeBase
     {
-        #region Public properties
-
-        public Vector3 rotationAxis {
-            get { return _rotationAxis; }
-            set { _rotationAxis = value; }
-        }
+        #region Editable properties
 
         [SerializeField]
         Vector3 _rotationAxis = Vector3.up;
 
-        public float angleMultiplier {
-            get { return _angleMultiplier; }
-            set { _angleMultiplier = value; }
-        }
-
         [SerializeField]
         float _angleMultiplier = 90.0f;
-
-        public float angleBias {
-            get { return _angleBias; }
-            set { _angleBias = value; }
-        }
-
-        [SerializeField]
-        float _angleBias = 0.0f;
 
         #endregion
 
@@ -63,10 +45,10 @@ namespace Klak.Wiring
             set {
                 if (!enabled) return;
 
-                var a = value * _angleMultiplier + _angleBias;
-                var r = Quaternion.AngleAxis(a, _rotationAxis);
+                var angle = value * _angleMultiplier;
+                var rotation = Quaternion.AngleAxis(angle, _rotationAxis);
 
-                _rotationEvent.Invoke(r);
+                _rotationEvent.Invoke(rotation);
             }
         }
 

@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Euler Rotation")]
+    [AddComponentMenu("Klak/Wiring/Basic/Euler Rotation")]
     public class EulerRotation : NodeBase
     {
         #region Node I/O

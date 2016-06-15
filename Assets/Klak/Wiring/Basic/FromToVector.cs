@@ -26,36 +26,26 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/From To Vector")]
+    [AddComponentMenu("Klak/Wiring/Basic/From To Vector")]
     public class FromToVector : NodeBase
     {
-        #region Public properties
-
-        public Vector3 vectorFrom {
-            get { return _vectorFrom; }
-            set { _vectorFrom = value; }
-        }
+        #region Editable properties
 
         [SerializeField]
-        Vector3 _vectorFrom = Vector3.zero;
-
-        public Vector3 vectorTo {
-            get { return _vectorTo; }
-            set { _vectorTo = value; }
-        }
+        Vector3 _fromVector = Vector3.zero;
 
         [SerializeField]
-        Vector3 _vectorTo = Vector3.up;
+        Vector3 _toVector = Vector3.up;
 
         #endregion
 
         #region Node I/O
 
         [Inlet]
-        public float input {
+        public float parameter {
             set {
                 if (!enabled) return;
-                var v = BasicMath.Lerp(_vectorFrom, _vectorTo, value);
+                var v = BasicMath.Lerp(_fromVector, _toVector, value);
                 _vectorEvent.Invoke(v);
             }
         }

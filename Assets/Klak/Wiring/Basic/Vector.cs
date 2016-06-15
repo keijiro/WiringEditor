@@ -26,16 +26,13 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Vector")]
+    [AddComponentMenu("Klak/Wiring/Basic/Vector")]
     public class Vector : NodeBase
     {
         #region Editable properties
 
         [SerializeField]
         Vector3 _baseVector = Vector3.up;
-
-        [SerializeField]
-        bool _normalize = false;
 
         #endregion
 
@@ -51,16 +48,6 @@ namespace Klak.Wiring
 
         [SerializeField, Outlet]
         Vector3Event _vectorEvent = new Vector3Event();
-
-        #endregion
-
-        #region MonoBehaviour functions
-
-        void Start()
-        {
-            // Overwrite baseVector if normalization is enabled.
-            if (_normalize) _baseVector = Vector3.Normalize(_baseVector);
-        }
 
         #endregion
     }

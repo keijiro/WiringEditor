@@ -25,10 +25,10 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Convert/Color Ramp")]
+    [AddComponentMenu("Klak/Wiring/Basic/Color Ramp")]
     public class ColorRamp : NodeBase
     {
-        #region Public properties
+        #region Editable properties
 
         public enum ColorMode { Gradient, ColorArray }
 
@@ -47,13 +47,11 @@ namespace Klak.Wiring
         #region Node I/O
 
         [Inlet]
-        public float input {
+        public float parameter {
             set {
-                if (!enabled)
-                {
-                    // Do nothing.
-                }
-                else if (_colorMode == ColorMode.Gradient)
+                if (!enabled) return;
+
+                if (_colorMode == ColorMode.Gradient)
                 {
                     _colorEvent.Invoke(_gradient.Evaluate(value));
                 }

@@ -30,17 +30,17 @@ namespace Klak.Wiring
     [CustomEditor(typeof(FromToVector))]
     public class FromToVectorEditor : Editor
     {
-        SerializedProperty _vectorFrom;
-        SerializedProperty _vectorTo;
+        SerializedProperty _fromVector;
+        SerializedProperty _toVector;
         SerializedProperty _vectorEvent;
 
-        static GUIContent _textVectorFrom = new GUIContent("From (Value at 0)");
-        static GUIContent _textVectorTo = new GUIContent("To (Value at 1)");
+        static GUIContent _textFrom = new GUIContent("From (parameter = 0)");
+        static GUIContent _textTo = new GUIContent("To (parameter = 1)");
 
         void OnEnable()
         {
-            _vectorFrom = serializedObject.FindProperty("_vectorFrom");
-            _vectorTo = serializedObject.FindProperty("_vectorTo");
+            _fromVector = serializedObject.FindProperty("_fromVector");
+            _toVector = serializedObject.FindProperty("_toVector");
             _vectorEvent = serializedObject.FindProperty("_vectorEvent");
         }
 
@@ -48,8 +48,8 @@ namespace Klak.Wiring
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_vectorFrom, _textVectorFrom);
-            EditorGUILayout.PropertyField(_vectorTo, _textVectorTo);
+            EditorGUILayout.PropertyField(_fromVector, _textFrom);
+            EditorGUILayout.PropertyField(_toVector, _textTo);
 
             EditorGUILayout.Space();
 

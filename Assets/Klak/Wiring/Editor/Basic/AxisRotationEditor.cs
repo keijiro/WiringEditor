@@ -32,14 +32,12 @@ namespace Klak.Wiring
     {
         SerializedProperty _rotationAxis;
         SerializedProperty _angleMultiplier;
-        SerializedProperty _angleBias;
         SerializedProperty _rotationEvent;
 
         void OnEnable()
         {
             _rotationAxis = serializedObject.FindProperty("_rotationAxis");
             _angleMultiplier = serializedObject.FindProperty("_angleMultiplier");
-            _angleBias = serializedObject.FindProperty("_angleBias");
             _rotationEvent = serializedObject.FindProperty("_rotationEvent");
         }
 
@@ -49,17 +47,7 @@ namespace Klak.Wiring
 
             EditorGUILayout.PropertyField(_rotationAxis);
 
-            EditorGUILayout.Space();
-
             EditorGUILayout.PropertyField(_angleMultiplier);
-            EditorGUILayout.PropertyField(_angleBias);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.HelpBox(
-                "RotationAngle = InputAngle * Multiplier + Bias",
-                MessageType.None, true
-            );
 
             EditorGUILayout.Space();
 

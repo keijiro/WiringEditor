@@ -31,13 +31,11 @@ namespace Klak.Wiring
     public class VectorEditor : Editor
     {
         SerializedProperty _baseVector;
-        SerializedProperty _normalize;
         SerializedProperty _vectorEvent;
 
         void OnEnable()
         {
             _baseVector = serializedObject.FindProperty("_baseVector");
-            _normalize = serializedObject.FindProperty("_normalize");
             _vectorEvent = serializedObject.FindProperty("_vectorEvent");
         }
 
@@ -46,10 +44,6 @@ namespace Klak.Wiring
             serializedObject.Update();
 
             EditorGUILayout.PropertyField(_baseVector);
-
-            EditorGUILayout.Space();
-
-            EditorGUILayout.PropertyField(_normalize);
 
             EditorGUILayout.Space();
 

@@ -404,7 +404,9 @@ namespace Klak.Wiring.Patcher
         // GUI function for the side bar
         void DrawSideBarGUI()
         {
-            EditorGUILayout.BeginVertical(GUILayout.MinWidth(304));
+            EditorGUIUtility.wideMode = true;
+
+            EditorGUILayout.BeginVertical(GUILayout.MinWidth(336));
             _scrollSide = EditorGUILayout.BeginScrollView(_scrollSide);
 
             // Determine the active node.
