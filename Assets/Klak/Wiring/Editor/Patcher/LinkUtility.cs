@@ -64,7 +64,7 @@ namespace Klak.Wiring.Patcher
                 if (actionType == typeof(UnityAction<float>))
                 {
                     UnityEventTools.AddFloatPersistentListener(
-                        triggerEvent, (UnityAction<float>)targetAction, 0.0f
+                        triggerEvent, (UnityAction<float>)targetAction, 1.0f
                     );
                     return true;
                 }
