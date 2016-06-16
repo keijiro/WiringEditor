@@ -128,7 +128,9 @@ namespace Klak.Wiring.Patcher
 
         void OnFocus()
         {
-            ResetState();
+            // OnFocus may be called before being enabled.
+            // So we have to check if it has been already initialized here.
+            if (_patchManager != null) ResetState();
         }
 
         void OnGUI()
