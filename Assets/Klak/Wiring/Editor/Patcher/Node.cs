@@ -321,15 +321,6 @@ namespace Klak.Wiring.Patcher
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance;
 
-            // Inlets (method)
-            foreach (var method in _instance.GetType().GetMethods(flags))
-            {
-                var attrs = method.GetCustomAttributes(typeof(Wiring.InletAttribute), true);
-                if (attrs.Length == 0) continue;
-                
-                _inlets.Add(new Inlet(method.Name, method.Name));
-            }
-
             // Inlets (property)
             foreach (var prop in _instance.GetType().GetProperties(flags))
             {
@@ -337,6 +328,15 @@ namespace Klak.Wiring.Patcher
                 if (attrs.Length == 0) continue;
 
                 _inlets.Add(new Inlet(prop.GetSetMethod().Name, prop.Name));
+            }
+
+            // Inlets (method)
+            foreach (var method in _instance.GetType().GetMethods(flags))
+            {
+                var attrs = method.GetCustomAttributes(typeof(Wiring.InletAttribute), true);
+                if (attrs.Length == 0) continue;
+                
+                _inlets.Add(new Inlet(method.Name, method.Name));
             }
 
             // Outlets (UnityEvent members)
