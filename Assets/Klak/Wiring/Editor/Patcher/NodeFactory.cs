@@ -80,7 +80,8 @@ namespace Klak.Wiring.Patcher
             var data = (MenuItemData)userData;
 
             // Create a game object.
-            var gameObject = new GameObject(data.type.Name);
+            var name = ObjectNames.NicifyVariableName(data.type.Name);
+            var gameObject = new GameObject(name);
             var instance = gameObject.AddComponent(data.type);
 
             // Add it to the patch.

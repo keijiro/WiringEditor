@@ -38,16 +38,14 @@ namespace Klak.Wiring.Patcher
         // Display name used in UIs
         public string displayName {
             get {
-                var nodeName = _instance.name;
-                var typeName = _instance.GetType().Name;
-                if (nodeName == typeName) return nodeName;
-                return nodeName + " (" + typeName + ")";
+                if (_instance.name == _typeName) return _typeName;
+                return _instance.name + " (" + _typeName + ")";
             }
         }
 
-        // Type name of the node instance
+        // Display name of the node type
         public string typeName {
-            get { return _instance.GetType().Name; }
+            get { return _typeName; }
         }
 
         // Is this window selected in the editor?
@@ -73,6 +71,7 @@ namespace Klak.Wiring.Patcher
         public Node(Wiring.NodeBase instance)
         {
             _instance = instance;
+            _typeName = ObjectNames.NicifyVariableName(_instance.GetType().Name);
             _windowID = _windowCounter++;
 
             // Inlets and outlets
@@ -229,6 +228,7 @@ namespace Klak.Wiring.Patcher
 
         // Runtime instance
         Wiring.NodeBase _instance;
+        string _typeName;
 
         // Inlet/outlet list
         List<Inlet> _inlets;
