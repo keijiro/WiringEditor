@@ -26,39 +26,22 @@ using System.Reflection;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Generic/Vector Out")]
-    public class VectorOut : NodeBase
+    [AddComponentMenu("Klak/Wiring/Output/Generic/Event Out")]
+    public class EventOut : NodeBase
     {
         #region Editable properties
 
         [SerializeField]
-        Component _target;
-
-        [SerializeField]
-        string _propertyName;
+        VoidEvent _event;
 
         #endregion
 
         #region Node I/O
 
         [Inlet]
-        public Vector3 input {
-            set {
-                if (!enabled || _target == null || _propertyInfo == null) return;
-                _propertyInfo.SetValue(_target, value, null);
-            }
-        }
-
-        #endregion
-
-        #region Private members
-
-        PropertyInfo _propertyInfo;
-
-        void OnEnable()
+        public void Bang()
         {
-            if (_target == null || string.IsNullOrEmpty(_propertyName)) return;
-            _propertyInfo = _target.GetType().GetProperty(_propertyName);
+            _event.Invoke();
         }
 
         #endregion

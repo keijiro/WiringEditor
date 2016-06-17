@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Particle System Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Component/Particle System Out")]
     public class ParticleSystemOut : NodeBase
     {
         #region Editable properties

@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Animator Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Component/Animator Out")]
     public class AnimatorOut : NodeBase
     {
         #region Editable properties

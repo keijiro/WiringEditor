@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Rotation Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Generic/Rotation Out")]
     public class RotationOut : NodeBase
     {
         #region Editable properties

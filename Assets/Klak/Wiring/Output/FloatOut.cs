@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Float Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Generic/Float Out")]
     public class FloatOut : NodeBase
     {
         #region Editable properties

@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Color Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Generic/Color Out")]
     public class ColorOut : NodeBase
     {
         #region Editable properties

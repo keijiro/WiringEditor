@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Output/Transform Out")]
+    [AddComponentMenu("Klak/Wiring/Output/Component/Transform Out")]
     public class TransformOut : NodeBase
     {
         #region Editable properties
