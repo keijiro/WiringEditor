@@ -97,6 +97,9 @@ namespace Klak.Wiring.Patcher
         Vector2 _scrollMain;
         Vector2 _scrollSide;
 
+        // Hierarchy change flag
+        bool _hierarchyChanged;
+
         #endregion
 
         #region EditorWindow functions
@@ -128,9 +131,17 @@ namespace Klak.Wiring.Patcher
 
         void OnFocus()
         {
-            // OnFocus may be called before being enabled.
-            // So we have to check if it has been already initialized here.
-            if (_patchManager != null) ResetState();
+            if (_hierarchyChanged) ResetState();
+        }
+
+        void OnLostFocus()
+        {
+            _hierarchyChanged = false;
+        }
+
+        void OnHierarchyChange()
+        {
+            _hierarchyChanged = true;
         }
 
         void OnGUI()
