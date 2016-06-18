@@ -92,7 +92,11 @@ namespace Klak.Wiring
                     if (index != newIndex)
                         _propertyName.stringValue = _propertyList[newIndex];
                 }
+                else
+                    _propertyName.stringValue = ""; // reset on failure
             }
+            else
+                _propertyName.stringValue = ""; // reset on failure
 
             serializedObject.ApplyModifiedProperties();
         }
