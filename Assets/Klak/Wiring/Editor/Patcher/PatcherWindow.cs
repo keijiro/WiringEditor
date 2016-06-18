@@ -131,7 +131,7 @@ namespace Klak.Wiring.Patcher
 
         void OnFocus()
         {
-            if (_hierarchyChanged) ResetState();
+            if (_hierarchyChanged && _patchManager != null) ResetState();
         }
 
         void OnLostFocus()
