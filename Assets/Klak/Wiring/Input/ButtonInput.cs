@@ -26,13 +26,13 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Input/Key Input")]
-    public class KeyInput : NodeBase
+    [AddComponentMenu("Klak/Wiring/Input/Button Input")]
+    public class ButtonInput : NodeBase
     {
         #region Editable properties
 
         [SerializeField]
-        KeyCode _keyCode = KeyCode.Space;
+        string _buttonName = "Jump";
 
         [SerializeField]
         float _offValue = 0.0f;
@@ -48,10 +48,10 @@ namespace Klak.Wiring
         #region Node I/O
 
         [SerializeField, Outlet]
-        VoidEvent _keyDownEvent = new VoidEvent();
+        VoidEvent _buttonDownEvent = new VoidEvent();
 
         [SerializeField, Outlet]
-        VoidEvent _keyUpEvent = new VoidEvent();
+        VoidEvent _buttonUpEvent = new VoidEvent();
 
         [SerializeField, Outlet]
         FloatEvent _valueEvent = new FloatEvent();
@@ -69,14 +69,14 @@ namespace Klak.Wiring
 
         void Update()
         {
-            if (Input.GetKeyDown(_keyCode))
+            if (Input.GetButtonDown(_buttonName))
             {
-                _keyDownEvent.Invoke();
+                _buttonDownEvent.Invoke();
                 _floatValue.targetValue = _onValue;
             }
-            else if (Input.GetKeyUp(_keyCode))
+            else if (Input.GetButtonUp(_buttonName))
             {
-                _keyUpEvent.Invoke();
+                _buttonUpEvent.Invoke();
                 _floatValue.targetValue = _offValue;
             }
 
