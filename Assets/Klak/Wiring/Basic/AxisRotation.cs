@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Basic/Axis Rotation")]
+    [AddComponentMenu("Klak/Wiring/Convertion/Axis Rotation")]
     public class AxisRotation : NodeBase
     {
         #region Editable properties

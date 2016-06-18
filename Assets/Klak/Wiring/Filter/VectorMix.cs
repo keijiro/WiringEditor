@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Vector Mix")]
+    [AddComponentMenu("Klak/Wiring/Mixing/Vector Mix")]
     public class VectorMix : NodeBase
     {
         #region Editable properties

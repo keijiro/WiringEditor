@@ -26,7 +26,7 @@ using System.Collections;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Repeat")]
+    [AddComponentMenu("Klak/Wiring/Switching/Repeat")]
     public class Repeat : NodeBase
     {
         #region Editable properties

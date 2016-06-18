@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Float Mix")]
+    [AddComponentMenu("Klak/Wiring/Mixing/Float Mix")]
     public class FloatMix : NodeBase
     {
         #region Editable properties

@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Rotation Mix")]
+    [AddComponentMenu("Klak/Wiring/Mixing/Rotation Mix")]
     public class RotationMix : NodeBase
     {
         #region Node I/O

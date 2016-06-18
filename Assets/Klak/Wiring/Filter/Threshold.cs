@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Threshold")]
+    [AddComponentMenu("Klak/Wiring/Switching/Threshold")]
     public class Threshold : NodeBase
     {
         #region Editable properties

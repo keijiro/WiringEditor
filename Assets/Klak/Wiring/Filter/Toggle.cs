@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Toggle")]
+    [AddComponentMenu("Klak/Wiring/Switching/Toggle")]
     public class Toggle : NodeBase
     {
         #region Editable properties

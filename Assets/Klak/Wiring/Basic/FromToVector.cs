@@ -26,7 +26,7 @@ using Klak.Math;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Basic/From To Vector")]
+    [AddComponentMenu("Klak/Wiring/Convertion/From To Vector")]
     public class FromToVector : NodeBase
     {
         #region Editable properties

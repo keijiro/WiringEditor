@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Basic/Float Animation")]
+    [AddComponentMenu("Klak/Wiring/Animation/Float Animation")]
     public class FloatAnimation : NodeBase
     {
         #region Editable properties

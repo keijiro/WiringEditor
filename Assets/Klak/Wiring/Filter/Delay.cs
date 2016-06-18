@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Delay")]
+    [AddComponentMenu("Klak/Wiring/Switching/Delay")]
     public class Delay : NodeBase
     {
         #region Editable properties

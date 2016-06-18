@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Float Vector Mix")]
+    [AddComponentMenu("Klak/Wiring/Mixing/Float Vector Mix")]
     public class FloatVectorMix : NodeBase
     {
         #region Node I/O

@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Basic/Color Ramp")]
+    [AddComponentMenu("Klak/Wiring/Convertion/Color Ramp")]
     public class ColorRamp : NodeBase
     {
         #region Editable properties
