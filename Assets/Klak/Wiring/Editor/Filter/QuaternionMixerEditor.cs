@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(RotationMixer))]
-    public class RotationMixerEditor : Editor
+    [CustomEditor(typeof(RotationMix))]
+    public class RotationMixEditor : Editor
     {
         public override void OnInspectorGUI()
         {

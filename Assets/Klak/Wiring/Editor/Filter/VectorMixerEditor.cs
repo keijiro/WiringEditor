@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(VectorMixer))]
-    public class VectorMixerEditor : Editor
+    [CustomEditor(typeof(VectorMix))]
+    public class VectorMixEditor : Editor
     {
         SerializedProperty _modulationType;
         SerializedProperty _outputEvent;

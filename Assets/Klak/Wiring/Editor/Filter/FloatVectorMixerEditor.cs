@@ -27,8 +27,8 @@ using UnityEditor;
 namespace Klak.Wiring
 {
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(FloatVectorMixer))]
-    public class FloatVectorMixerEditor : Editor
+    [CustomEditor(typeof(FloatVectorMix))]
+    public class FloatVectorMixEditor : Editor
     {
         public override void OnInspectorGUI()
         {

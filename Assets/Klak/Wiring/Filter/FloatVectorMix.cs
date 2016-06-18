@@ -25,37 +25,26 @@ using UnityEngine;
 
 namespace Klak.Wiring
 {
-    [AddComponentMenu("Klak/Wiring/Filter/Vector Mixer")]
-    public class VectorMixer : NodeBase
+    [AddComponentMenu("Klak/Wiring/Filter/Float Vector Mix")]
+    public class FloatVectorMix : NodeBase
     {
-        #region Editable properties
-
-        public enum ModulationType {
-            Off, Add, Subtract, Multiply, Cross, Minimum, Maximum
-        }
-
-        [SerializeField]
-        ModulationType _modulationType = ModulationType.Add;
-
-        #endregion
-
         #region Node I/O
 
         [Inlet]
-        public Vector3 input {
+        public float floatInput {
             set {
                 if (!enabled) return;
-                _inputValue = value;
-                _outputEvent.Invoke(MixValues());
+                _floatValue = value;
+                InvokeEvent();
             }
         }
 
         [Inlet]
-        public Vector3 modulation {
+        public Vector3 vectorInput {
             set {
                 if (!enabled) return;
-                _modulationValue = value;
-                _outputEvent.Invoke(MixValues());
+                _vectorValue = value;
+                InvokeEvent();
             }
         }
 
@@ -66,28 +55,12 @@ namespace Klak.Wiring
 
         #region Private members
 
-        Vector3 _inputValue;
-        Vector3 _modulationValue;
+        float _floatValue;
+        Vector3 _vectorValue;
 
-        Vector3 MixValues()
+        void InvokeEvent()
         {
-            switch (_modulationType)
-            {
-                case ModulationType.Add:
-                    return _inputValue + _modulationValue;
-                case ModulationType.Subtract:
-                    return _inputValue - _modulationValue;
-                case ModulationType.Multiply:
-                    return Vector3.Scale(_inputValue, _modulationValue);
-                case ModulationType.Cross:
-                    return Vector3.Cross(_inputValue, _modulationValue);
-                case ModulationType.Minimum:
-                    return Vector3.Min(_inputValue, _modulationValue);
-                case ModulationType.Maximum:
-                    return Vector3.Max(_inputValue, _modulationValue);
-            }
-            // Off
-            return _inputValue;
+            _outputEvent.Invoke(_floatValue * _vectorValue);
         }
 
         #endregion

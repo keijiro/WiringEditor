@@ -22,28 +22,47 @@
 // THE SOFTWARE.
 //
 using UnityEngine;
-using UnityEditor;
 
 namespace Klak.Wiring
 {
-    [CanEditMultipleObjects]
-    [CustomEditor(typeof(StartTrigger))]
-    public class StartTriggerEditor : Editor
+    [AddComponentMenu("Klak/Wiring/Filter/Rotation Mix")]
+    public class RotationMix : NodeBase
     {
-        SerializedProperty _onStartEvent;
+        #region Node I/O
 
-        void OnEnable()
-        {
-            _onStartEvent = serializedObject.FindProperty("_onStartEvent");
+        [Inlet]
+        public Quaternion input {
+            set {
+                if (!enabled) return;
+                _inputValue = value;
+                InvokeEvent();
+            }
         }
 
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-
-            EditorGUILayout.PropertyField(_onStartEvent);
-
-            serializedObject.ApplyModifiedProperties();
+        [Inlet]
+        public Quaternion modulation {
+            set {
+                if (!enabled) return;
+                _modulationValue = value;
+                InvokeEvent();
+            }
         }
+
+        [SerializeField, Outlet]
+        QuaternionEvent _outputEvent = new QuaternionEvent();
+
+        #endregion
+
+        #region Private members
+
+        Quaternion _inputValue;
+        Quaternion _modulationValue;
+
+        void InvokeEvent()
+        {
+            _outputEvent.Invoke(_inputValue * _modulationValue);
+        }
+
+        #endregion
     }
 }
